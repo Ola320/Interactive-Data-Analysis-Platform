@@ -1,26 +1,282 @@
-﻿<Window x:Class="DataAnalizer.MainWindow"
+<Window x:Class="DataAnalizer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataAnalizer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="850" AllowsTransparency="True" WindowStartupLocation="CenterScreen" WindowStyle="None"
+        Title="Data Tool Analyzer"
+        Height="600"
+        Width="1000"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
         Background="Transparent">
 
     <Grid>
+        <!-- Tło całego okna -->
+        <Border Background="#F5F7FA" CornerRadius="20"/>
 
-        <Border Background="White"
-                CornerRadius="20"/>
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="228"/>
-            <ColumnDefinition Width ="622"/>
+            <!-- LEWE MENU -->
+            <Border Grid.Column="0"
+                    Background="#1E293B"
+                    CornerRadius="15"
+                    Margin="0,0,10,0">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Data Tool"
+                               Foreground="White"
+                               FontSize="24"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="Analyzer"
+                               Foreground="#94A3B8"
+                               FontSize="16"
+                               Margin="0,0,0,30"/>
 
-        </Grid.ColumnDefinitions>
-            
+                    <Button Content="Dashboard"
+                            Height="45"
+                            Margin="0,0,0,10"
+                            Background="#3B82F6"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontSize="14"/>
 
+                    <Button Content="Import Data"
+                            Height="45"
+                            Margin="0,0,0,10"
+                            Background="#334155"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontSize="14"/>
 
+                    <Button Content="Analysis"
+                            Height="45"
+                            Margin="0,0,0,10"
+                            Background="#334155"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontSize="14"/>
+
+                    <Button Content="Predictions"
+                            Height="45"
+                            Margin="0,0,0,10"
+                            Background="#334155"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontSize="14"/>
+
+                    <Button Content="Settings"
+                            Height="45"
+                            Margin="0,20,0,0"
+                            Background="#334155"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontSize="14"/>
+                </StackPanel>
+            </Border>
+
+            <!-- PRAWA CZĘŚĆ -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="120"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- GÓRNY PASEK -->
+                <Border Grid.Row="0"
+                        Background="White"
+                        CornerRadius="15"
+                        Margin="0,0,0,10">
+                    <Grid Margin="20,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Dashboard"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"/>
+                            <TextBlock Text="Welcome to your data analysis panel"
+                                       FontSize="13"
+                                       Foreground="Gray"/>
+                        </StackPanel>
+
+                        <TextBox Grid.Column="1"
+                                 Height="35"
+                                 VerticalAlignment="Center"
+                                 Text="Search..."
+                                 Padding="10,5"
+                                 Background="#F1F5F9"
+                                 BorderBrush="#E2E8F0"
+                                 BorderThickness="1"/>
+                    </Grid>
+                </Border>
+
+                <!-- KARTY STATYSTYK -->
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Background="White"
+                            CornerRadius="15"
+                            Margin="0,0,10,0">
+                        <StackPanel Margin="20">
+                            <TextBlock Text="Loaded Files"
+                                       FontSize="14"
+                                       Foreground="Gray"/>
+                            <TextBlock Text="12"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Background="White"
+                            CornerRadius="15"
+                            Margin="0,0,10,0">
+                        <StackPanel Margin="20">
+                            <TextBlock Text="Rows Analyzed"
+                                       FontSize="14"
+                                       Foreground="Gray"/>
+                            <TextBlock Text="5,240"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2"
+                            Background="White"
+                            CornerRadius="15">
+                        <StackPanel Margin="20">
+                            <TextBlock Text="Model Accuracy"
+                                       FontSize="14"
+                                       Foreground="Gray"/>
+                            <TextBlock Text="92.4%"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- DOLNA CZĘŚĆ -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- GŁÓWNY PANEL -->
+                    <Border Grid.Column="0"
+                            Background="White"
+                            CornerRadius="15"
+                            Margin="0,0,10,0">
+                        <StackPanel Margin="20">
+                            <TextBlock Text="Analysis Overview"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,0,0,15"/>
+
+                            <Border Background="#F8FAFC"
+                                    CornerRadius="10"
+                                    Height="220">
+                                <Grid>
+                                    <TextBlock Text="Tu możesz później dodać wykres albo tabelę"
+                                               Foreground="Gray"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <TextBlock Text="Recent activity"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,20,0,10"/>
+
+                            <TextBlock Text="• Imported CSV file"
+                                       FontSize="14"
+                                       Foreground="#334155"
+                                       Margin="0,5,0,0"/>
+                            <TextBlock Text="• Cleaned missing values"
+                                       FontSize="14"
+                                       Foreground="#334155"
+                                       Margin="0,5,0,0"/>
+                            <TextBlock Text="• Generated prediction report"
+                                       FontSize="14"
+                                       Foreground="#334155"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- BOCZNY PANEL -->
+                    <Border Grid.Column="1"
+                            Background="White"
+                            CornerRadius="15">
+                        <StackPanel Margin="20">
+                            <TextBlock Text="Quick Actions"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,0,0,15"/>
+
+                            <Button Content="Upload File"
+                                    Height="45"
+                                    Margin="0,0,0,10"
+                                    Background="#3B82F6"
+                                    Foreground="White"
+                                    BorderThickness="0"/>
+
+                            <Button Content="Run Analysis"
+                                    Height="45"
+                                    Margin="0,0,0,10"
+                                    Background="#10B981"
+                                    Foreground="White"
+                                    BorderThickness="0"/>
+
+                            <Button Content="Export Report"
+                                    Height="45"
+                                    Margin="0,0,0,20"
+                                    Background="#F59E0B"
+                                    Foreground="White"
+                                    BorderThickness="0"/>
+
+                            <TextBlock Text="Status"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="#1E293B"
+                                       Margin="0,10,0,10"/>
+
+                            <Border Background="#ECFDF5"
+                                    CornerRadius="10"
+                                    Padding="10">
+                                <TextBlock Text="System ready"
+                                           Foreground="#065F46"
+                                           FontWeight="SemiBold"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
-  
 </Window>
