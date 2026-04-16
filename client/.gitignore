@@ -1,0 +1,23 @@
+## Pliki kompilacji
+bin/
+obj/
+
+## Pliki Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Pliki NuGet (pobierają się same przy budowaniu)
+packages/
+*.nuget.props
+*.nuget.targets
+
+## Pliki Testów i logi
+TestResults/
+*.log
+
+## Pliki systemowe
+Thumbs.db
+desktop.ini
