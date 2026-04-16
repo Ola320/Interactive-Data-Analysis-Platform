@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Analiza Nieruchomości - Pełny Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f4f4f9; 
+            margin: 0; 
+            padding: 20px; 
+            color: #333;
+        }
+        .container {
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
+        .section { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .grid-2 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+        }
+        .kpi-row { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+            margin: 15px 0; 
+        }
+        .kpi-card { 
+            background: #007bff; 
+            color: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            text-align: center; 
+        }
+        .kpi-card h3 {
+            margin: 10px 0 0 0;
+            font-size: 24px;
+        }
+        .chart-container { 
+            position: relative; 
+            height: 350px; 
+            width: 100%; 
+            margin-top: 20px;
+        }
+        button { 
+            padding: 10px 15px; 
+            cursor: pointer; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            font-weight: bold;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log-btn { 
+            background: #6c757d; 
+            margin: 5px; 
+        }
+        .log-btn:hover {
+            background: #5a6268;
+        }
+        input[type="text"] {
+            padding: 10px; 
+            width: 300px; 
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="grid-2">
+        <div class="section">
+            <h3>1. Wgraj nowy plik CSV</h3>
+            <input type="file" id="fileInput"> 
+            <button onclick="wgrajPlik()">Wgraj na serwer</button>
+        </div>
+        
+        <div class="section">
+            <h3>2. Historia Wgranych Plików</h3>
+            <button onclick="pobierzHistorie()">Odśwież historię z bazy</button>
+            <div id="logs" style="margin-top:15px; max-height: 150px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <div id="sekcja-globalna" class="section" style="display:none;">
+        <h2 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">Statystyki Globalne</h2>
+        
+        <div class="chart-container" style="height: 400px;">
+            <canvas id="wykres-miasta"></canvas>
+        </div>
+        
+        <div class="grid-2">
+            <div class="chart-container"><canvas id="wykres-hist"></canvas></div>
+            <div class="chart-container"><canvas id="wykres-scatter"></canvas></div>
+        </div>
+    </div>
+
+    <div id="sekcja-miasto" class="section" style="display:none; border-top: 5px solid #007bff;">
+        <h2 style="color: #007bff;">Szczegóły wybranego miasta</h2>
+        
+        <input type="text" id="input-miasto" list="lista-miast" placeholder="Wybierz miasto z listy..." onchange="zaladujDaneMiasta()">
+        <datalist id="lista-miast"></datalist>
+
+        <div class="kpi-row">
+            <div class="kpi-card">Liczba ofert: <h3 id="kpi-1">-</h3></div>
+            <div class="kpi-card">Średnia Cena: <h3 id="kpi-2">-</h3></div>
+            <div class="kpi-card">Średnio za m2: <h3 id="kpi-3">-</h3></div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="chart-container"><canvas id="wykres-pokoje"></canvas></div>
+            <div class="chart-container"><canvas id="wykres-centrum"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let aktualneIdLogu = null;
+    let obiektyWykresow = {};
+
+    function stworzWykres(idWykresu, typWykresu, daneZBackendu, etykieta, kolor, czyPoziomy = false) {
+        if (obiektyWykresow[idWykresu]) {
+            obiektyWykresow[idWykresu].destroy();
+        }
+        
+        const canvasContext = document.getElementById(idWykresu).getContext('2d');
+        const czyDuzyWykresPunktowy = (typWykresu === 'scatter' && daneZBackendu.length > 1000);
+        
+        // ZABEZPIECZENIE DLA WYKRESÓW SŁUPKOWYCH (Rozwiązuje błąd poziomego wykresu miast)
+        // Jeśli to scatter, przekazujemy całe obiekty {x, y}. Jeśli słupek - wyciągamy same liczby (y).
+        const sformatowaneDane = typWykresu === 'scatter' ? daneZBackendu : daneZBackendu.map(d => d.y);
+        
+        obiektyWykresow[idWykresu] = new Chart(canvasContext, {
+            type: typWykresu,
+            data: {
+                labels: typWykresu === 'scatter' ? null : daneZBackendu.map(d => d.x),
+                datasets: [{ 
+                    label: etykieta, 
+                    data: sformatowaneDane, 
+                    backgroundColor: kolor,
+                    pointRadius: czyDuzyWykresPunktowy ? 2 : 4,
+                }]
+            },
+            options: { 
+                maintainAspectRatio: false, 
+                indexAxis: czyPoziomy ? 'y' : 'x',
+                scales: typWykresu === 'scatter' ? { 
+                    x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Odległość od centrum (km) / Metraż' } },
+                    y: { title: { display: true, text: 'Cena (PLN)' } }
+                } : {},
+                animation: czyDuzyWykresPunktowy ? false : true 
+            }
+        });
+    }
+
+    async function wgrajPlik() {
+        const plikInput = document.getElementById('fileInput');
+        if(plikInput.files.length === 0) { alert("Najpierw wybierz plik z dysku!"); return; }
+
+        const formData = new FormData(); 
+        formData.append("file", plikInput.files[0]);
+        
+        try {
+            await fetch("http://127.0.0.1:8000/upload", { method: "POST", body: formData });
+            alert("Plik wgrany i przeliczony poprawnie!"); 
+            pobierzHistorie();
+        } catch (error) { alert("Wystąpił błąd podczas wgrywania. Upewnij się, że serwer Python działa."); }
+    }
+
+    async function pobierzHistorie() {
+        const response = await fetch("http://127.0.0.1:8000/logs");
+        const dane = await response.json();
+        
+        const divHistoria = document.getElementById('logs');
+        divHistoria.innerHTML = ""; 
+        
+        dane.forEach(log => {
+            const przycisk = document.createElement('button');
+            przycisk.className = 'log-btn';
+            przycisk.innerText = log.name;
+            przycisk.onclick = () => wczytajDanyLog(log.id);
+            divHistoria.appendChild(przycisk);
+        });
+    }
+
+    async function wczytajDanyLog(idLogu) {
+        aktualneIdLogu = idLogu;
+        const response = await fetch("http://127.0.0.1:8000/data/" + idLogu);
+        const dane = await response.json();
+        
+        if(dane.error) { alert(dane.error); return; }
+        
+        document.getElementById('sekcja-globalna').style.display = 'block';
+        document.getElementById('sekcja-miasto').style.display = 'block';
+        
+        stworzWykres('wykres-miasta', 'bar', dane.wykresy_globalne.miasta, 'Wszystkie miasta (Top 15)', '#007bff', true);
+        stworzWykres('wykres-hist', 'bar', dane.wykresy_globalne.histogram, 'Rozkład Cen w PL', '#28a745');
+        stworzWykres('wykres-scatter', 'scatter', dane.wykresy_globalne.scatter, 'Metraż vs Cena (1000 pkt)', '#dc3545');
+
+        const listaRozwijana = document.getElementById('lista-miast');
+        listaRozwijana.innerHTML = "";
+        dane.info.miasta.forEach(miasto => {
+            const opcja = document.createElement('option');
+            opcja.value = miasto;
+            listaRozwijana.appendChild(opcja);
+        });
+        
+        document.getElementById('input-miasto').value = "";
+        document.getElementById('kpi-1').innerText = "-";
+        document.getElementById('kpi-2').innerText = "-";
+        document.getElementById('kpi-3').innerText = "-";
+        if(obiektyWykresow['wykres-pokoje']) obiektyWykresow['wykres-pokoje'].destroy();
+        if(obiektyWykresow['wykres-centrum']) obiektyWykresow['wykres-centrum'].destroy();
+    }
+
+    async function zaladujDaneMiasta() {
+        const nazwaMiasta = document.getElementById('input-miasto').value;
+        if(!nazwaMiasta) return;
+
+        const response = await fetch(`http://127.0.0.1:8000/city_details/${aktualneIdLogu}/${nazwaMiasta}`);
+        const dane = await response.json();
+        
+        if(dane.error) { alert(dane.error); return; }
+
+        document.getElementById('kpi-1').innerText = dane.kpi.n;
+        document.getElementById('kpi-2').innerText = dane.kpi.avg.toLocaleString('pl-PL') + " zł";
+        document.getElementById('kpi-3').innerText = dane.kpi.m2.toLocaleString('pl-PL') + " zł";
+
+        stworzWykres('wykres-pokoje', 'bar', dane.charts.pokoje, 'Średnia cena wg ilości pokoi', '#6f42c1');
+        stworzWykres('wykres-centrum', 'scatter', dane.charts.centrum, `Cena vs Odległość od centrum (${dane.kpi.n} ofert)`, '#fd7e14');
+    }
+</script>
+</body>
+</html>
