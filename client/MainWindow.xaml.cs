@@ -25,6 +25,12 @@ namespace DataAnalizer
             _dashboardContent = MainContent.Content;
         }
 
+        private void BtnImport_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new ImportDataView();
+            TxtHeader.Text = "Import Data";
+        }
+
         // Kliknięcie w Diagrams - podmieniamy widok
         private void BtnDiagrams_Click(object sender, RoutedEventArgs e)
         {

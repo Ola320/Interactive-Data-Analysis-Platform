@@ -27,7 +27,7 @@
                     <TextBlock Text="Analyzer" Foreground="#94A3B8" FontSize="16" Margin="0,0,0,30"/>
 
                     <Button Content="Dashboard" Height="45" Margin="0,0,0,10" Background="#3B82F6" Foreground="White" BorderThickness="0" FontSize="14" Click="ShowDashboard_Click"/>
-                    <Button Content="Import Data" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>
+                    <Button Content="Import Data" x:Name="BtnImport" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnImport_Click"/>
                     <Button Content="Analysis" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>
                     
                     <Button Content="Diagrams" x:Name="BtnDiagrams" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnDiagrams_Click"/>
