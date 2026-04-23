@@ -1,0 +1,61 @@
+<UserControl x:Class="DataAnalizer.Views.PredictionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="White" CornerRadius="15" Margin="0,0,10,0" Padding="25">
+            <StackPanel>
+                <TextBlock Text="Price Predictor Configuration" FontSize="18" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,20"/>
+
+                <TextBlock Text="Square Footage (m²)" Foreground="#64748B" Margin="0,10,0,5"/>
+                <Grid>
+                    <Slider x:Name="SliderArea" MaxWidth="450" Minimum="15" Maximum="200" Value="50" TickFrequency="25" IsSnapToTickEnabled="True" ValueChanged="UpdatePrice_Event"/>
+                    <TextBlock Text="{Binding ElementName=SliderArea, Path=Value, StringFormat={}{0:N0} m²}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,25" FontWeight="SemiBold"/>
+                </Grid>
+
+                <TextBlock Text="Number of Rooms" Foreground="#64748B" Margin="0,15,0,5"/>
+                <Grid>
+                    <Slider x:Name="SliderRooms" MaxWidth="450" Minimum="1" Maximum="6" Value="2" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="UpdatePrice_Event"/>
+                    <TextBlock Text="{Binding ElementName=SliderRooms, Path=Value}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,25" FontWeight="SemiBold"/>
+                </Grid>
+
+                <TextBlock Text="Number of Bathrooms" Foreground="#64748B" Margin="0,15,0,5"/>
+                <Grid>
+                    <Slider x:Name="SliderBaths" MaxWidth="450" Minimum="1" Maximum="3" Value="1" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="UpdatePrice_Event"/>
+                    <TextBlock Text="{Binding ElementName=SliderBaths, Path=Value}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,25" FontWeight="SemiBold"/>
+                </Grid>
+
+                <TextBlock Text="Floor Level" Foreground="#64748B" Margin="0,15,0,5"/>
+                <ComboBox x:Name="ComboFloor" SelectedIndex="1" SelectionChanged="UpdatePrice_Event">
+                    <ComboBoxItem Content="Ground Floor"/>
+                    <ComboBoxItem Content="1-3 Floor"/>
+                    <ComboBoxItem Content="4+ Floor"/>
+                    <ComboBoxItem Content="Penthouse"/>
+                </ComboBox>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Background="#F8FAFC" CornerRadius="15" Padding="25">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Estimated Price" HorizontalAlignment="Center" Foreground="#64748B" FontSize="16"/>
+                <TextBlock x:Name="TxtEstimatedPrice" Text="450 000 PLN" HorizontalAlignment="Center" Foreground="#3B82F6" FontSize="32" FontWeight="Bold" Margin="0,10"/>
+                
+                <Separator Margin="0,20"/>
+                
+                <TextBlock Text="Confidence Score" HorizontalAlignment="Center" Foreground="#64748B"/>
+                <TextBlock Text="88%" HorizontalAlignment="Center" Foreground="#10B981" FontSize="20" FontWeight="Bold"/>
+                
+                <Button Content="Calculate Detailed Report" Margin="0,30,0,0" Height="40" Background="#1E293B" Foreground="White" BorderThickness="0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

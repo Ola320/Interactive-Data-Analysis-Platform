@@ -51,5 +51,11 @@ namespace DataAnalizer
             MainContent.Content = new SettingsView();
             TxtHeader.Text = "Settings";
         }
+
+        private void BtnPredictions_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new PredictionsView();
+            TxtHeader.Text = "Price Predictions (Polish Real Estate)";
+        }
     }
 }

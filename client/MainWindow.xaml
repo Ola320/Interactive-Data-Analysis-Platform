@@ -24,15 +24,14 @@
             <Border Grid.Column="0" Background="#1E293B" CornerRadius="15" Margin="0,0,10,0">
                 <StackPanel Margin="20">
                     <TextBlock Text="Data Tool" Foreground="White" FontSize="24" FontWeight="Bold"/>
-                    <TextBlock Text="Analyzer" Foreground="#94A3B8" FontSize="16" Margin="0,0,0,30"/>
 
+                    <TextBlock Text="Analyzer" Foreground="#94A3B8" FontSize="16" Margin="0,0,0,30"/>
                     <Button Content="Dashboard" Height="45" Margin="0,0,0,10" Background="#3B82F6" Foreground="White" BorderThickness="0" FontSize="14" Click="ShowDashboard_Click"/>
                     <Button Content="Import Data" x:Name="BtnImport" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnImport_Click"/>
-                    <Button Content="Analysis" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>
-                    
+                    <Button Content="Analysis" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>     
                     <Button Content="Diagrams" x:Name="BtnDiagrams" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnDiagrams_Click"/>
+                    <Button Content="Predictions" x:Name="BtnPredictions" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnPredictions_Click"/>
 
-                    <Button Content="Predictions" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>
                     <Button Content="Settings" x:Name="BtnSettings" Height="45" Margin="0,20,0,0" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnSettings_Click"/>
                 </StackPanel>
             </Border>
