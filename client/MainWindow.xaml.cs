@@ -38,5 +38,12 @@ namespace DataAnalizer
             MainContent.Content = _dashboardContent;
             TxtHeader.Text = "Dashboard";
         }
+
+        // Kliknięcie w Settings - podmieniamy widok na ustawienia
+        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = new SettingsView();
+            TxtHeader.Text = "Settings";
+        }
     }
 }

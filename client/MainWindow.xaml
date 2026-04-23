@@ -33,7 +33,7 @@
                     <Button Content="Diagrams" x:Name="BtnDiagrams" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnDiagrams_Click"/>
 
                     <Button Content="Predictions" Height="45" Margin="0,0,0,10" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>
-                    <Button Content="Settings" Height="45" Margin="0,20,0,0" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14"/>
+                    <Button Content="Settings" x:Name="BtnSettings" Height="45" Margin="0,20,0,0" Background="#334155" Foreground="White" BorderThickness="0" FontSize="14" Click="BtnSettings_Click"/>
                 </StackPanel>
             </Border>
 
