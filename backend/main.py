@@ -1,16 +1,32 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import sqlite3
-import json
 import os
+import io
+import json
 import pandas as pd
 from datetime import datetime
-from data_service import process_apartment_data
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="Analiza Nieruchomości API")
+from backend.data_service import get_city_analytics
+# Import Twoich modułów
+from database import get_db_connection, init_db
+from data_service import clean_data, process_apartament_data
 
-# Zabezpieczenie CORS - pozwala frontendowi (HTML) połączyć się z backendem
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if not os.path.exists("uploads"):
+        os.makedirs("uploads")
+    init_db()
+    yield
+
+
+
+app = FastAPI(title="Analiza Nieruchomości API",lifespan=lifespan)
+
+# Konfiguracja CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,138 +35,111 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Tworzenie folderu na pliki, jeśli nie istnieje
-if not os.path.exists("uploads"):
-    os.makedirs("uploads")
 
-# Funkcja pomocnicza do łączenia z bazą danych
-def get_db_connection():
-    conn = sqlite3.connect("logs.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
-# Inicjalizacja bazy danych SQLite
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            date TEXT,
-            path TEXT,
-            stats JSON
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-# Uruchamiamy tworzenie bazy na starcie
-init_db()
-
-# Endpoint 1: Wgrywanie pliku
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    raw_data = await file.read()
-    
-    # Przetwarzanie danych przez naszą usługę w Pythonie
-    wyniki = process_apartment_data(raw_data)
-    
-    # Zapis pliku fizycznie na dysk serwera
-    filepath = f"uploads/{file.filename}"
-    with open(filepath, "wb") as f:
-        f.write(raw_data)
-        
-    # Zapis metadanych i wyliczonych statystyk do bazy danych
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO logs (name, date, path, stats) VALUES (?, ?, ?, ?)", 
-        (file.filename, datetime.now().isoformat(), filepath, json.dumps(wyniki))
-    )
-    conn.commit()
-    conn.close()
-    
-    return wyniki
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Tylko pliki CSV są akceptowane.")
 
-# Endpoint 2: Pobieranie listy historii wgranych plików
+    try:
+        # 1. Odczyt surowych danych
+        content = await file.read()
+        df_raw = pd.read_csv(io.BytesIO(content))
+
+        # 2. Czyszczenie i analiza (Twój data_service)
+        df_clean = clean_data(df_raw)
+        if df_clean.empty:
+            raise HTTPException(status_code=400, detail="Po wyczyszczeniu danych plik jest pusty.")
+
+        wyniki = process_apartament_data(df_clean)
+
+        # 3. Zapis wyczyszczonego pliku na dysk
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filepath = f"uploads/cleaned_{timestamp}_{file.filename}"
+        df_clean.to_csv(filepath, index=False)
+
+        # 4. Zapis do bazy danych
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO logs (name, date, path, stats) VALUES (?, ?, ?, ?)",
+            (file.filename, datetime.now().isoformat(), filepath, json.dumps(wyniki))
+        )
+        conn.commit()
+        log_id = cursor.lastrowid  # Pobieramy ID nowo dodanego wpisu
+        conn.close()
+
+        return {"id": log_id, "stats": wyniki}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Błąd przetwarzania: {str(e)}")
+
+
 @app.get("/logs")
-async def get_logs_history():
+async def get_logs():
     conn = get_db_connection()
     cursor = conn.cursor()
+    # Pobieramy historię
     cursor.execute("SELECT id, name, date FROM logs ORDER BY id DESC")
     rows = cursor.fetchall()
     conn.close()
-    
-    logs_list = [dict(row) for row in rows]
-    return logs_list
+    return [dict(row) for row in rows]
 
-# Endpoint 3: Pobieranie przeliczonych danych globalnych z wybranego logu z bazy
-@app.get("/data/{log_id}")
-async def get_log_data(log_id: int):
+
+@app.get("/logs/{log_id}")
+async def get_log_details(log_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT stats FROM logs WHERE id = ?", (log_id,))
     row = cursor.fetchone()
     conn.close()
-    
+
     if not row:
-        return {"error": "Brak danych dla tego logu."}
-        
+        raise HTTPException(status_code=404, detail="Nie znaleziono logu o tym ID.")
+
     return json.loads(row["stats"])
 
-# Endpoint 4: Lupa na miasto - liczenie wykresów na żywo dla wybranego miasta
 @app.get("/city_details/{log_id}/{city_name}")
-async def get_city_details(log_id: int, city_name: str):
+async def city_details(log_id: int, city_name: str):
+    conn = get_db_connection()
+    row = conn.execute("SELECT path FROM logs WHERE id = ?",(log_id)).fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404,detail='nie znaleziono takiego miast')
+
+    df = pd.read_csv(row['path'])
+
+    analiza = get_city_analytics(df,city_name)
+
+    if not analiza:
+        raise HTTPException(status_code=404,detail='nie znaleziono miasta')
+
+    return analiza
+
+
+# Opcjonalnie: Endpoint do usuwania wpisów
+@app.delete("/logs/{log_id}")
+async def delete_log(log_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
+    # Najpierw pobierz ścieżkę do pliku, żeby go usunąć z dysku
     cursor.execute("SELECT path FROM logs WHERE id = ?", (log_id,))
     row = cursor.fetchone()
+
+    if row:
+        if os.path.exists(row["path"]):
+            os.remove(row["path"])
+
+        cursor.execute("DELETE FROM logs WHERE id = ?", (log_id,))
+        conn.commit()
+        conn.close()
+        return {"message": "Usunięto pomyślnie"}
+
     conn.close()
-    
-    if not row:
-        return {"error": "Plik nie istnieje w bazie."}
+    raise HTTPException(status_code=404, detail="Log nie istnieje")
 
-    filepath = row["path"]
-    
-    # Wczytujemy z dysku pełny plik CSV i filtrujemy go po nazwie miasta
-    df = pd.read_csv(filepath)
-    df_city = df[df['city'].str.lower() == city_name.lower()]
-    
-    # Usuwamy puste wiersze tylko dla kolumn, których używamy do tych dwóch konkretnych wykresów
-    df_city = df_city.dropna(subset=['price', 'squareMeters', 'rooms', 'centreDistance'])
-    
-    if df_city.empty:
-        return {"error": f"Brak poprawnych danych dla miasta {city_name}."}
 
-    # Obliczanie KPI (Kluczowych wskaźników)
-    kpi_n = len(df_city)
-    kpi_avg = round(float(df_city['price'].mean()), 0)
-    kpi_m2 = round(float((df_city['price'] / df_city['squareMeters']).mean()), 0)
-
-    # Wykres 1 dla miasta: Średnia cena w zależności od liczby pokoi
-    pokoje_stat = df_city.groupby('rooms')['price'].mean().reset_index()
-    wykres_pokoje = []
-    for _, row in pokoje_stat.iterrows():
-        wykres_pokoje.append({"x": f"{int(row['rooms'])} pok.", "y": float(row['price'])})
-    
-    # Wykres 2 dla miasta: Punktowy odległość od centrum vs cena (BIERZEMY WSZYSTKIE WIERSZE - brak próbowania)
-    wykres_centrum = []
-    for _, row in df_city.iterrows():
-        wykres_centrum.append({"x": float(row['centreDistance']), "y": float(row['price'])})
-
-    return {
-        "kpi": {
-            "n": kpi_n, 
-            "avg": kpi_avg, 
-            "m2": kpi_m2
-        },
-        "charts": {
-            "pokoje": wykres_pokoje,
-            "centrum": wykres_centrum
-        }
-    }
-
-# Uruchomienie serwera uvicorn (lokalnie na porcie 8000)
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
