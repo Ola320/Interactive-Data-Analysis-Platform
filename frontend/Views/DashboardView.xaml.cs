@@ -64,7 +64,8 @@ namespace DataAnalizer.Views
                         Values = stats.TopCities.Select(c => c.PricePerSqm).ToArray(),
                         Fill = new SolidColorPaint(SKColor.Parse("#4f46e5")),
                         MaxBarWidth = 30,
-                        TooltipLabelFormatter = (chartPoint) => $"${chartPoint.PrimaryValue:N0}/m²"
+                      
+                        YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.PrimaryValue:N0} zł/m²"
                     }
                 };
 

@@ -11,6 +11,33 @@
         Background="#f8fafc"
         FontFamily="Segoe UI">
 
+    <!-- Styles -->
+    <Window.Resources>
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94a3b8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1e293b"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
@@ -35,21 +62,21 @@
                 <!-- Navigation -->
                 <StackPanel Grid.Row="1" Margin="15,20,15,0">
                     <TextBlock Text="MAIN MENU" Foreground="#64748b" FontSize="11" FontWeight="Bold" Margin="10,0,0,10"/>
-                    
+
                     <Button x:Name="BtnDashboard" Click="BtnDashboard_Click" Style="{StaticResource NavButtonStyle}" Margin="0,0,0,5">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <lucide:PackIconLucide Kind="LayoutDashboard" Width="18" Height="18" Margin="0,0,10,0"/>
                             <TextBlock Text="Dashboard" FontSize="14"/>
                         </StackPanel>
                     </Button>
-                    
+
                     <Button x:Name="BtnHistory" Click="BtnHistory_Click" Style="{StaticResource NavButtonStyle}" Margin="0,0,0,5">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <lucide:PackIconLucide Kind="History" Width="18" Height="18" Margin="0,0,10,0"/>
                             <TextBlock Text="History &amp; Logs" FontSize="14"/>
                         </StackPanel>
                     </Button>
-                    
+
                     <Button x:Name="BtnCityLookup" Click="BtnCityLookup_Click" Style="{StaticResource NavButtonStyle}" Margin="0,0,0,5">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <lucide:PackIconLucide Kind="MapPin" Width="18" Height="18" Margin="0,0,10,0"/>
@@ -83,7 +110,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    
+
                     <!-- Search -->
                     <Border Background="#f1f5f9" CornerRadius="8" Width="400" HorizontalAlignment="Left" Height="36" Padding="10,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -91,7 +118,7 @@
                             <TextBox BorderThickness="0" Background="Transparent" Foreground="#334155" Margin="10,0,0,0" Width="350" VerticalAlignment="Center" Text="Search across reports, cities, or IDs..."/>
                         </StackPanel>
                     </Border>
-                    
+
                     <!-- User Profile -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                         <lucide:PackIconLucide Kind="Bell" Foreground="#64748b" Width="20" Height="20" Margin="0,0,20,0" Cursor="Hand"/>
@@ -108,31 +135,4 @@
             <ContentControl x:Name="MainContentControl" Grid.Row="1" Margin="30"/>
         </Grid>
     </Grid>
-
-    <!-- Styles -->
-    <Window.Resources>
-        <Style x:Key="NavButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#94a3b8"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#1e293b"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
 </Window>

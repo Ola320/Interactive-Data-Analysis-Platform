@@ -7,7 +7,12 @@
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="900" Background="#f8fafc">
-    <Grid>
+
+    <UserControl.Resources>
+        <DropShadowEffect x:Key="DropShadow" BlurRadius="10" ShadowDepth="2" Color="#000000" Opacity="0.05"/>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -16,30 +21,33 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
-            <Button DockPanel.Dock="Right" Content="Export Report" Background="White" BorderBrush="#e2e8f0" Foreground="#334155" Padding="15,8" CornerRadius="8" Cursor="Hand"/>
+            <Button DockPanel.Dock="Right" Content="Export Report" Background="White" BorderBrush="#e2e8f0" Foreground="#334155" Padding="15,8"  Cursor="Hand"/>
             <TextBlock Text="Dashboard Overview" FontSize="24" FontWeight="Bold" Foreground="#0f172a"/>
         </DockPanel>
 
-        <!-- Upload Section -->
         <Border Grid.Row="1" Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="25" Margin="0,0,0,20">
             <StackPanel>
                 <TextBlock Text="Upload Dataset" FontSize="16" FontWeight="SemiBold" Foreground="#1e293b" Margin="0,0,0,15"/>
-                <Border AllowDrop="True" Drop="UploadBorder_Drop" Background="#f8fafc" BorderBrush="#cbd5e1" BorderThickness="2" CornerRadius="12" Padding="40,30" BorderDashArray="4 4" Cursor="Hand">
-                    <StackPanel HorizontalAlignment="Center">
-                        <Border Background="White" Width="64" Height="64" CornerRadius="32" Margin="0,0,0,15" HorizontalAlignment="Center" Effect="{StaticResource DropShadow}">
-                            <lucide:PackIconLucide Kind="UploadCloud" Foreground="#4f46e5" Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock x:Name="UploadStatusText" Text="Click or drag and drop to upload" FontWeight="Medium" Foreground="#334155" HorizontalAlignment="Center"/>
-                        <TextBlock Text="CSV files only (Max 50MB)" FontSize="12" Foreground="#64748b" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                </Border>
+
+                <Grid>
+                    <Rectangle Stroke="#cbd5e1" StrokeThickness="2" StrokeDashArray="4 4" RadiusX="12" RadiusY="12"/>
+                    <Border x:Name="UploadArea" AllowDrop="True" Drop="UploadBorder_Drop" Background="#f8fafc" CornerRadius="12" Padding="40,30" Cursor="Hand">
+                        <StackPanel HorizontalAlignment="Center">
+                            <Border Background="White" Width="64" Height="64" CornerRadius="32" Margin="0,0,0,15" HorizontalAlignment="Center" Effect="{StaticResource DropShadow}">
+                                <lucide:PackIconLucide Kind="Upload" Foreground="#4f46e5" Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock x:Name="UploadStatusText" Text="Click or drag and drop to upload" FontWeight="Medium" Foreground="#334155" HorizontalAlignment="Center"/>
+                            <TextBlock Text="CSV files only (Max 50MB)" FontSize="12" Foreground="#64748b" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
                 <ProgressBar x:Name="UploadProgressBar" Height="6" Visibility="Collapsed" Margin="0,15,0,0" Foreground="#4f46e5" BorderThickness="0" Background="#e2e8f0"/>
             </StackPanel>
         </Border>
 
-        <!-- KPI Cards -->
         <UniformGrid Grid.Row="2" Columns="4" Margin="0,0,0,20">
-            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,15,0">
+            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,10,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -54,8 +62,8 @@
                     </StackPanel>
                 </Grid>
             </Border>
-            
-            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,15,0">
+
+            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="5,0,10,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -71,13 +79,13 @@
                 </Grid>
             </Border>
 
-            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,15,0">
+            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="5,0,10,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border Background="#eef2ff" CornerRadius="8" Width="48" Height="48" VerticalAlignment="Top" Margin="0,0,15,0">
+                    <Border Background="#eef2ff" CornerRadius="8"  Width="48" Height="48" VerticalAlignment="Top" Margin="0,0,15,0">
                         <lucide:PackIconLucide Kind="TrendingUp" Foreground="#4f46e5" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1">
@@ -87,14 +95,14 @@
                 </Grid>
             </Border>
 
-            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20">
+            <Border Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="5,0,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Border Background="#eef2ff" CornerRadius="8" Width="48" Height="48" VerticalAlignment="Top" Margin="0,0,15,0">
-                        <lucide:PackIconLucide Kind="Grid" Foreground="#4f46e5" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <lucide:PackIconLucide Kind="LayoutGrid" Foreground="#4f46e5" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="Avg Price / m²" Foreground="#64748b" FontSize="13" FontWeight="Medium"/>
@@ -104,7 +112,6 @@
             </Border>
         </UniformGrid>
 
-        <!-- Charts -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -112,22 +119,18 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,10,0">
-                <StackPanel>
-                    <TextBlock Text="Top Cities by Price/m²" FontSize="16" FontWeight="SemiBold" Foreground="#1e293b" Margin="0,0,0,15"/>
-                    <lvc:CartesianChart x:Name="BarChartCities" Height="250"/>
-                </StackPanel>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Top Cities by Price/m²" FontSize="16" FontWeight="SemiBold" Foreground="#1e293b" Margin="0,0,0,15"/>
+                    <lvc:CartesianChart x:Name="BarChartCities"/>
+                </DockPanel>
             </Border>
 
             <Border Grid.Column="1" Background="White" BorderBrush="#e2e8f0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="10,0,0,0">
-                <StackPanel>
-                    <TextBlock Text="Room Distribution" FontSize="16" FontWeight="SemiBold" Foreground="#1e293b" Margin="0,0,0,15"/>
-                    <lvc:PieChart x:Name="PieChartRooms" Height="250"/>
-                </StackPanel>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Room Distribution" FontSize="16" FontWeight="SemiBold" Foreground="#1e293b" Margin="0,0,0,15"/>
+                    <lvc:PieChart x:Name="PieChartRooms"/>
+                </DockPanel>
             </Border>
         </Grid>
     </Grid>
-
-    <UserControl.Resources>
-        <DropShadowEffect x:Key="DropShadow" BlurRadius="10" ShadowDepth="2" Color="#000000" Opacity="0.05"/>
-    </UserControl.Resources>
 </UserControl>
