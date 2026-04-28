@@ -77,7 +77,7 @@ def get_city_analytics(df: DataFrame, city: str):
     df_city = df[df['city'].str.lower() == city.lower()].copy()
 
     avg_m = round(df_city['price'].mean(),0)
-    avg_price_m2 = (df_city['price']/df['squareMeters']).mean()
+    avg_price_m2 = (df_city['price']/df_city['squareMeters']).mean()
 
     distance_km = [
         {'dist':round(float(r['centreDistance']),1),'price': int(r['price'])}

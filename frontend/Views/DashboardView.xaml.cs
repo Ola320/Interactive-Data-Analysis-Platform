@@ -44,27 +44,39 @@ namespace DataAnalizer.Views
             }
         }
 
+        public async Task LoadLogById(int logId)
+        {
+            try
+            {
+                var stats = await _apiService.GetLogDetailsAsync(logId);
+                UpdateDashboard(stats);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load analysis: {ex.Message}");
+            }
+        }
+
         private void UpdateDashboard(AnalyticsData stats)
         {
-            if (stats == null) return;
+            if (stats == null || stats.Summary == null) return;
 
             // Update KPIs
-            TxtTotalOffers.Text = stats.TotalOffers.ToString("N0");
-            TxtAvgPrice.Text = $"${stats.AvgPrice:N0}";
-            TxtMedianPrice.Text = $"${stats.MedianPrice:N0}";
-            TxtAvgPricePerSqm.Text = $"${stats.AvgPricePerSqm:N0}";
+            TxtTotalOffers.Text = stats.Summary.TotalOffers.ToString("N0");
+            TxtAvgPrice.Text = $"${stats.Summary.AvgPrice:N0}";
+            TxtMedianPrice.Text = $"${stats.Summary.MedianPrice:N0}";
+            TxtAvgPricePerSqm.Text = $"${stats.Summary.AvgPricePerSqm:N0}";
 
             // Update Bar Chart (Top Cities)
-            if (stats.TopCities != null)
+            if (stats.Charts?.CityChart != null)
             {
                 BarChartCities.Series = new ISeries[]
                 {
                     new ColumnSeries<double>
                     {
-                        Values = stats.TopCities.Select(c => c.PricePerSqm).ToArray(),
+                        Values = stats.Charts.CityChart.Select(c => c.PricePerSqm).ToArray(),
                         Fill = new SolidColorPaint(SKColor.Parse("#4f46e5")),
                         MaxBarWidth = 30,
-                      
                         YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.PrimaryValue:N0} zł/m²"
                     }
                 };
@@ -73,28 +85,72 @@ namespace DataAnalizer.Views
                 {
                     new Axis
                     {
-                        Labels = stats.TopCities.Select(c => c.Name).ToArray(),
+                        Labels = stats.Charts.CityChart.Select(c => c.Name).ToArray(),
                         LabelsPaint = new SolidColorPaint(SKColor.Parse("#64748b"))
                     }
                 };
             }
 
             // Update Pie Chart (Room Distribution)
-            if (stats.RoomDistribution != null)
+            if (stats.Charts?.RoomsChart != null)
             {
                 var colors = new[] { "#4f46e5", "#6366f1", "#818cf8", "#a5b4fc", "#c7d2fe" };
                 var series = new List<ISeries>();
-                for (int i = 0; i < stats.RoomDistribution.Count; i++)
+                for (int i = 0; i < stats.Charts.RoomsChart.Count; i++)
                 {
                     series.Add(new PieSeries<int>
                     {
-                        Values = new[] { stats.RoomDistribution[i].Value },
-                        Name = stats.RoomDistribution[i].Name,
+                        Values = new[] { stats.Charts.RoomsChart[i].Value },
+                        Name = stats.Charts.RoomsChart[i].Name,
                         Fill = new SolidColorPaint(SKColor.Parse(colors[i % colors.Length])),
                         InnerRadius = 60
                     });
                 }
                 PieChartRooms.Series = series.ToArray();
+            }
+
+            // Update Trend Chart
+            if (stats.Charts?.Trends != null)
+            {
+                LineChartTrends.Series = new ISeries[]
+                {
+                    new LineSeries<double>
+                    {
+                        Values = stats.Charts.Trends.Select(t => t.AvgPrice).ToArray(),
+                        Fill = null,
+                        Stroke = new SolidColorPaint(SKColor.Parse("#4f46e5")) { StrokeThickness = 3 },
+                        GeometrySize = 10,
+                        GeometryFill = new SolidColorPaint(SKColor.Parse("#4f46e5"))
+                    }
+                };
+
+                LineChartTrends.XAxes = new Axis[]
+                {
+                    new Axis
+                    {
+                        Labels = stats.Charts.Trends.Select(t => t.Year.ToString()).ToArray(),
+                        LabelsPaint = new SolidColorPaint(SKColor.Parse("#64748b"))
+                    }
+                };
+            }
+
+            // Update Scatter Chart (Price vs Distance)
+            if (stats.Charts?.PriceVsDistance != null)
+            {
+                ScatterChartDistance.Series = new ISeries[]
+                {
+                    new ScatterSeries<PriceDistance>
+                    {
+                        Values = stats.Charts.PriceVsDistance.ToArray(),
+                        Mapping = (point, index) => new(point.Distance, point.Price),
+                        Fill = new SolidColorPaint(SKColor.Parse("#818cf8")) { Opacity = 0.6f },
+                        MinGeometrySize = 5,
+                        MaxGeometrySize = 15
+                    }
+                };
+
+                ScatterChartDistance.XAxes = new Axis[] { new Axis { Name = "Distance (km)" } };
+                ScatterChartDistance.YAxes = new Axis[] { new Axis { Name = "Price (zł)" } };
             }
         }
 

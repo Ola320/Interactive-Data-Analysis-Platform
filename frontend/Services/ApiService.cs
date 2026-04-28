@@ -60,6 +60,12 @@ namespace DataAnalizer.Services
             return null;
         }
 
+        public async Task RenameLogAsync(int logId, string newName)
+        {
+            var response = await _httpClient.PutAsync($"/logs/{logId}?name={Uri.EscapeDataString(newName)}", null);
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task DeleteLogAsync(int logId)
         {
             var response = await _httpClient.DeleteAsync($"/logs/{logId}");
