@@ -8,8 +8,7 @@ import pandas as pd
 from datetime import datetime
 from contextlib import asynccontextmanager
 
-from backend.data_service import get_city_analytics
-# Import Twoich modułów
+from data_service import get_city_analytics
 from database import get_db_connection, init_db
 from data_service import clean_data, process_apartament_data
 
