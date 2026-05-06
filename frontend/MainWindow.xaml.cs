@@ -8,6 +8,7 @@ namespace DataAnalizer
         private DashboardView _dashboardView;
         private HistoryView _historyView;
         private CityDetailsView _cityDetailsView;
+        private LoginView _loginView;
 
         public MainWindow()
         {
@@ -15,9 +16,10 @@ namespace DataAnalizer
             _dashboardView = new DashboardView();
             _historyView = new HistoryView();
             _cityDetailsView = new CityDetailsView();
+            _loginView = new LoginView();
 
             // Load default view
-            MainContentControl.Content = _dashboardView;
+            MainContentControl.Content = _loginView;
         }
 
         private void BtnDashboard_Click(object sender, RoutedEventArgs e)
@@ -33,6 +35,12 @@ namespace DataAnalizer
         private void BtnCityLookup_Click(object sender, RoutedEventArgs e)
         {
             MainContentControl.Content = _cityDetailsView;
+        }
+
+        // Metoda do przełączania na główny widok po zalogowaniu
+        public void ShowMainView()
+        {
+            MainContentControl.Content = _dashboardView;
         }
     }
 }

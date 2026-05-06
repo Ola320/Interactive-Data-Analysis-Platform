@@ -1,0 +1,7 @@
+# requirements.txt for backend
+fastapi
+uvicorn
+pandas
+python-multipart
+bcrypt
+pyjwt

@@ -91,3 +91,23 @@ namespace DataAnalizer.Models
         public double AvgPricePerSqm { get; set; }
     }
 }
+
+    public class RegisterRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class AuthResponse
+    {
+        [JsonPropertyName("access_token")]
+        public string AccessToken { get; set; }
+        [JsonPropertyName("token_type")]
+        public string TokenType { get; set; }
+    }
