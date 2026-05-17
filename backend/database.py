@@ -1,92 +1,32 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, EmailStr
+import uvicorn
+import os
+import io
+import json
+import pandas as pd
+from datetime import datetime, timedelta
+from contextlib import asynccontextmanager
 import bcrypt
 import jwt
-import sqlite3
-import uvicorn
-from datetime import datetime, timedelta
 
-app = FastAPI()
+from data_service import get_city_analytics, clean_data, process_apartament_data
+from database import get_db_connection, init_db
 
-# Database functions
+# JWT CONFIG
+JWT_SECRET = "super_secret_key"
+JWT_ALGORITHM = "HS256"
 
-def get_db_connection():
-    conn = sqlite3.connect("logs.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS logs(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            date TEXT,
-            path TEXT,
-            stats JSON
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-
-def add_user(username, password):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    # Here you should add code to hash the password before storing it
-    
-    cursor.execute('''
-        INSERT INTO users (username, password_hash)
-        VALUES (?, ?)
-    ''', (username, password))
-    
-    conn.commit()
-    conn.close()
-
-def query_user(username):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        SELECT * FROM users WHERE username = ?
-    ''', (username,))
-    
-    user = cursor.fetchone()
-    conn.close()
-    return user
-
-def remove_user(username):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        DELETE FROM users WHERE username = ?
-    ''', (username,))
-    
-    conn.commit()
-    conn.close()
-
-# Pydantic models
-
+# MODELE PYDANTIC (Zintegrowane z polem e-mail)
 class RegisterModel(BaseModel):
     username: str
+    email: str  # Dodane pole e-mail do rejestracji
     password: str
 
 class LoginModel(BaseModel):
     username: str
     password: str
-
-JWT_SECRET = "super_secret_key"
-JWT_ALGORITHM = "HS256"
 
 def create_jwt_token(username: str):
     payload = {
@@ -95,33 +35,163 @@ def create_jwt_token(username: str):
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-# FastAPI routes
+# LIFESPAN APP (Zarządzanie startem i końcem aplikacji)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if not os.path.exists("uploads"):
+        os.makedirs("uploads")
+    init_db()  # Inicjalizacja bazy (teraz tworzy tabelę users z polem email)
+    yield
+
+app = FastAPI(title="Analiza Nieruchomości API", lifespan=lifespan)
+
+# KONFIGURACJA CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- AUTH ENDPOINTS ---
 
 @app.post("/register")
 async def register(user: RegisterModel):
-    # Registration logic here
-    hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Walidacja unikalności loginu oraz e-maila po stronie backendu
+    cursor.execute("SELECT id FROM users WHERE username = ? OR email = ?", (user.username, user.email))
+    if cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=400, detail="Nazwa użytkownika lub adres e-mail jest już zajęty.")
+        
+    password_hash = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
     try:
-        add_user(user.username, hashed_password)
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", 
+            (user.username, user.email, password_hash)
+        )
+        conn.commit()
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Username already exists")
-    return {"message": "User registered successfully"}
+        conn.close()
+        raise HTTPException(status_code=500, detail="Błąd zapisu w bazie danych: " + str(e))
+        
+    conn.close()
+    return {"msg": "Rejestracja udana"}
 
 @app.post("/login")
 async def login(user: LoginModel):
-    db_user = query_user(user.username)
-    if not db_user or not bcrypt.checkpw(user.password.encode('utf-8'), db_user["password_hash"].encode('utf-8')):
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+    conn = get_db_connection()
+    cursor = conn.cursor()
     
-    # Create JWT token
-    token = jwt.encode({"user_id": db_user["id"]}, "SECRET_KEY", algorithm="HS256")
+    cursor.execute("SELECT password_hash FROM users WHERE username = ?", (user.username,))
+    row = cursor.fetchone()
+    conn.close()
     
+    if not row:
+        raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        
+    password_hash = row["password_hash"]
+    if not bcrypt.checkpw(user.password.encode(), password_hash.encode()):
+        raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        
+    token = create_jwt_token(user.username)
     return {"access_token": token, "token_type": "bearer"}
+
+# --- POZOSTAŁE ENDPOINTY (DANE I LOGI) ---
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Tylko pliki CSV są akceptowane.")
+
+    try:
+        content = await file.read()
+        df_raw = pd.read_csv(io.BytesIO(content))
+        df_clean = clean_data(df_raw)
+        
+        if df_clean.empty:
+            raise HTTPException(status_code=400, detail="Po wyczyszczeniu danych plik jest pusty.")
+
+        wyniki = process_apartament_data(df_clean)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filepath = f"uploads/cleaned_{timestamp}_{file.filename}"
+        df_clean.to_csv(filepath, index=False)
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO logs (name, date, path, stats) VALUES (?, ?, ?, ?)",
+            (file.filename, datetime.now().isoformat(), filepath, json.dumps(wyniki))
+        )
+        conn.commit()
+        log_id = cursor.lastrowid
+        conn.close()
+
+        return {"id": log_id, "stats": wyniki}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Błąd przetwarzania: {str(e)}")
+
+@app.get("/logs")
+async def get_logs():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, date FROM logs ORDER BY id DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+@app.get("/logs/{log_id}")
+async def get_log_details(log_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT stats FROM logs WHERE id = ?", (log_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Nie znaleziono logu o tym ID.")
+
+    return json.loads(row["stats"])
+
+@app.get("/city_details/{log_id}/{city_name}")
+async def city_details(log_id: int, city_name: str):
+    conn = get_db_connection()
+    row = conn.execute("SELECT path FROM logs WHERE id = ?", (log_id,)).fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail='Nie znaleziono takiego logu raportu.')
+
+    df = pd.read_csv(row['path'])
+    analiza = get_city_analytics(df, city_name)
+
+    if not analiza:
+        raise HTTPException(status_code=404, detail='Nie znaleziono danych dla podanego miasta.')
+
+    return analiza
+
+@app.delete("/logs/{log_id}")
+async def delete_log(log_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT path FROM logs WHERE id = ?", (log_id,))
+    row = cursor.fetchone()
+
+    if row:
+        if os.path.exists(row["path"]):
+            os.remove(row["path"])
+
+        cursor.execute("DELETE FROM logs WHERE id = ?", (log_id,))
+        conn.commit()
+        conn.close()
+        return {"message": "Usunięto pomyślnie"}
+
+    conn.close()
+    raise HTTPException(status_code=404, detail="Log nie istnieje")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
-
-
-
-
-

@@ -62,10 +62,10 @@ namespace DataAnalizer.Services
             return null;
         }
 
-        // Added login method
+        // Poprawiona metoda logowania (wyciąga access_token)
         public async Task<bool> LoginAsync(string username, string password)
         {
-            var payload = new { username, password };
+            var payload = new LoginRequest { Username = username, Password = password };
             var response = await _httpClient.PostAsJsonAsync("/login", payload);
             if (!response.IsSuccessStatusCode)
                 return false;
@@ -74,7 +74,9 @@ namespace DataAnalizer.Services
             {
                 var json = await response.Content.ReadAsStringAsync();
                 using var doc = JsonDocument.Parse(json);
-                if (doc.RootElement.TryGetProperty("token", out var tokenElement))
+                
+                // FastAPI domyślnie zwraca "access_token" zamiast "token"
+                if (doc.RootElement.TryGetProperty("access_token", out var tokenElement))
                 {
                     _jwtToken = tokenElement.GetString();
                     if (!string.IsNullOrEmpty(_jwtToken))
@@ -85,16 +87,22 @@ namespace DataAnalizer.Services
             }
             catch
             {
-                // ignore parsing errors; login succeeded if status code was success
+                // Ignoruj błędy parsowania; jeśli status był 200, to operacja się powiodła
             }
 
             return true;
         }
 
-        // Added register method
-        public async Task<bool> RegisterAsync(string username, string password)
+        // Poprawiona metoda rejestracji obsługująca 3 argumenty (w tym email)
+        public async Task<bool> RegisterAsync(string username, string password, string email)
         {
-            var payload = new { username, password };
+            var payload = new RegisterRequest 
+            { 
+                Username = username, 
+                Password = password, 
+                Email = email 
+            };
+            
             var response = await _httpClient.PostAsJsonAsync("/register", payload);
             return response.IsSuccessStatusCode;
         }

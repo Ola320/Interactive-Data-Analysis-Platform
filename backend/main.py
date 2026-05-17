@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 import uvicorn
 import os
 import io
@@ -11,17 +11,17 @@ from contextlib import asynccontextmanager
 import bcrypt
 import jwt
 
-from data_service import get_city_analytics
+from data_service import get_city_analytics, clean_data, process_apartament_data
 from database import get_db_connection, init_db
-from data_service import clean_data, process_apartament_data
 
-# JWT config
+# JWT CONFIG
 JWT_SECRET = "super_secret_key"
 JWT_ALGORITHM = "HS256"
 
-# MODELE DO AUTH
+# MODELE PYDANTIC (Zintegrowane z polem e-mail)
 class RegisterModel(BaseModel):
     username: str
+    email: str  # Dodane pole e-mail do rejestracji
     password: str
 
 class LoginModel(BaseModel):
@@ -35,16 +35,17 @@ def create_jwt_token(username: str):
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
+# LIFESPAN APP (Zarządzanie startem i końcem aplikacji)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not os.path.exists("uploads"):
         os.makedirs("uploads")
-    init_db()
+    init_db()  # Inicjalizacja bazy (teraz tworzy tabelę users z polem email)
     yield
 
 app = FastAPI(title="Analiza Nieruchomości API", lifespan=lifespan)
 
-# Konfiguracja CORS
+# KONFIGURACJA CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -53,18 +54,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# AUTH ENDPOINTS
+# --- AUTH ENDPOINTS ---
+
 @app.post("/register")
 async def register(user: RegisterModel):
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    # Walidacja unikalności loginu oraz e-maila po stronie backendu
+    cursor.execute("SELECT id FROM users WHERE username = ? OR email = ?", (user.username, user.email))
+    if cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=400, detail="Nazwa użytkownika lub adres e-mail jest już zajęty.")
+        
     password_hash = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
     try:
-        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (user.username, password_hash))
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", 
+            (user.username, user.email, password_hash)
+        )
         conn.commit()
     except Exception as e:
         conn.close()
-        raise HTTPException(status_code=400, detail="Użytkownik już istnieje lub błąd bazy: " + str(e))
+        raise HTTPException(status_code=500, detail="Błąd zapisu w bazie danych: " + str(e))
+        
     conn.close()
     return {"msg": "Rejestracja udana"}
 
@@ -72,18 +85,23 @@ async def register(user: RegisterModel):
 async def login(user: LoginModel):
     conn = get_db_connection()
     cursor = conn.cursor()
+    
     cursor.execute("SELECT password_hash FROM users WHERE username = ?", (user.username,))
     row = cursor.fetchone()
     conn.close()
+    
     if not row:
         raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        
     password_hash = row["password_hash"]
     if not bcrypt.checkpw(user.password.encode(), password_hash.encode()):
         raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        
     token = create_jwt_token(user.username)
     return {"access_token": token, "token_type": "bearer"}
 
-# POZOSTAŁE ENDPOINTY
+# --- POZOSTAŁE ENDPOINTY (DANE I LOGI) ---
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     if not file.filename.endswith('.csv'):
@@ -93,6 +111,7 @@ async def upload_file(file: UploadFile = File(...)):
         content = await file.read()
         df_raw = pd.read_csv(io.BytesIO(content))
         df_clean = clean_data(df_raw)
+        
         if df_clean.empty:
             raise HTTPException(status_code=400, detail="Po wyczyszczeniu danych plik jest pusty.")
 
@@ -145,13 +164,13 @@ async def city_details(log_id: int, city_name: str):
     conn.close()
 
     if not row:
-        raise HTTPException(status_code=404, detail='nie znaleziono takiego miast')
+        raise HTTPException(status_code=404, detail='Nie znaleziono takiego logu raportu.')
 
     df = pd.read_csv(row['path'])
     analiza = get_city_analytics(df, city_name)
 
     if not analiza:
-        raise HTTPException(status_code=404, detail='nie znaleziono miasta')
+        raise HTTPException(status_code=404, detail='Nie znaleziono danych dla podanego miasta.')
 
     return analiza
 
