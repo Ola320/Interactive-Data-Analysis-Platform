@@ -50,8 +50,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -70,8 +74,7 @@
               "RelativeToolTip": "frontend\\Views\\LoginView.xaml.cs",
               "ViewState": "AgIAAA0AAAAAAAAAAAAgwBMAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T20:51:08.649Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:51:08.649Z"
             },
             {
               "$type": "Document",
@@ -82,8 +85,7 @@
               "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Views\\LoginView.xaml",
               "RelativeToolTip": "frontend\\Views\\LoginView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-06T20:50:49.475Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:50:49.475Z"
             },
             {
               "$type": "Document",
@@ -95,8 +97,7 @@
               "RelativeToolTip": "frontend\\Services\\ApiService.cs",
               "ViewState": "AgIAAEEAAAAAAAAAAAA1wGwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T20:48:55.458Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:48:55.458Z"
             },
             {
               "$type": "Document",
@@ -106,7 +107,7 @@
               "RelativeDocumentMoniker": "backend\\database.py",
               "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\database.py",
               "RelativeToolTip": "backend\\database.py",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAWwHQAAABTAAAAAAAAAA==",
+              "ViewState": "AgIAABcAAAAAAAAAAAAAACwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-05-06T20:42:24.241Z",
               "EditorCaption": ""
@@ -121,8 +122,7 @@
               "RelativeToolTip": "frontend\\MainWindow.xaml.cs",
               "ViewState": "AgIAAB0AAAAAAAAAAAAtwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T20:51:45.098Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:51:45.098Z"
             },
             {
               "$type": "Document",
@@ -134,8 +134,7 @@
               "RelativeToolTip": "frontend\\Models\\Models.cs",
               "ViewState": "AgIAAG8AAAAAAAAAAIBQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-06T20:47:39.172Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:47:39.172Z"
             },
             {
               "$type": "Document",
@@ -147,8 +146,7 @@
               "RelativeToolTip": "backend\\requirements.txt",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2026-05-06T20:42:28.525Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:42:28.525Z"
             },
             {
               "$type": "Document",
@@ -160,8 +158,7 @@
               "RelativeToolTip": "backend\\main.py",
               "ViewState": "AgIAAAAAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
-              "WhenOpened": "2026-05-06T20:42:42.19Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:42:42.19Z"
             },
             {
               "$type": "Document",
@@ -173,21 +170,19 @@
               "RelativeToolTip": ".gitignore",
               "ViewState": "AgIAADwAAAAAAAAAAABRwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-05-06T20:37:46.262Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:37:46.262Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "DataAnalizer",
+              "Title": "DataAnalizer.csproj",
               "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\DataAnalizer.csproj",
               "RelativeDocumentMoniker": "frontend\\DataAnalizer.csproj",
               "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\DataAnalizer.csproj",
               "RelativeToolTip": "frontend\\DataAnalizer.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-06T20:21:08.729Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-06T20:21:08.729Z"
             }
           ]
         }
