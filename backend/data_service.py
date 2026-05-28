@@ -48,7 +48,7 @@ def process_apartament_data(df: pd.DataFrame):
     city_chart = [{'city':city, 'value':round(val,0)} for city,val in city_ranking.items()]
 
     rooms_dist = df['rooms'].value_counts().sort_index()
-    rooms_chart = [{'name':room, "value": val} for room, val in rooms_dist.items()]
+    rooms_chart = [{'name': str(room), "value": int(val)} for room, val in rooms_dist.items()]
 
     scatter_data = df[['squareMeters','price']].sample(n=min(500,len(df))).to_dict(orient='records')
 
@@ -84,16 +84,10 @@ def get_city_analytics(df: DataFrame, city: str):
         for _, r in df_city.iterrows()
     ]
     return {
-        'stats': {
-        'cunt': len(df_city),
-        'city':city,
-        'average':avg_m,
-        'price_per_m2':avg_price_m2,
-
-        },
-        'charts':{
-        'distance_vs_price':distance_km
-        }
+        'city': city,
+        'total_listings': int(len(df_city)),
+        'avg_price': float(avg_m),
+        'avg_price_per_sqm': float(avg_price_m2)
     }
 
 

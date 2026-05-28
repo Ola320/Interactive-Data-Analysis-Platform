@@ -110,7 +110,7 @@ async def get_log_details(log_id: int):
 @app.get("/city_details/{log_id}/{city_name}")
 async def city_details(log_id: int, city_name: str):
     conn = get_db_connection()
-    row = conn.execute("SELECT path FROM logs WHERE id = ?",(log_id)).fetchone()
+    row = conn.execute("SELECT path FROM logs WHERE id = ?",(log_id,)).fetchone()
     conn.close()
 
     if not row:
