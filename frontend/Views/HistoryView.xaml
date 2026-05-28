@@ -60,14 +60,17 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="UPLOAD DATE" Binding="{Binding Date}" Width="250" Foreground="#334155"/>
-                    <DataGridTemplateColumn Header="ACTIONS" Width="150">
+                    <DataGridTemplateColumn Header="ACTIONS" Width="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,15,0">
-                                    <Button Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Download" Margin="0,0,10,0">
-                                        <lucide:PackIconLucide Kind="Download" Foreground="#94a3b8" Width="16" Height="16"/>
+                                    <Button Click="BtnRename_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Rename" Margin="0,0,10,0">
+                                        <lucide:PackIconLucide Kind="Pencil" Foreground="#94a3b8" Width="16" Height="16"/>
                                     </Button>
-                                    <Button Content="Analyze >" Background="#eef2ff" Foreground="#4f46e5" BorderThickness="0" Padding="10,5"  Cursor="Hand" FontSize="12" FontWeight="SemiBold"/>
+                                    <Button Click="BtnDelete_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Delete" Margin="0,0,10,0">
+                                        <lucide:PackIconLucide Kind="Trash2" Foreground="#ef4444" Width="16" Height="16"/>
+                                    </Button>
+                                    <Button Click="BtnAnalyze_Click" Content="Analyze >" Background="#eef2ff" Foreground="#4f46e5" BorderThickness="0" Padding="10,5"  Cursor="Hand" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

@@ -20,6 +20,12 @@ namespace DataAnalizer
             MainContentControl.Content = _dashboardView;
         }
 
+        public void ShowDashboardWithLog(int logId)
+        {
+            MainContentControl.Content = _dashboardView;
+            _ = _dashboardView.LoadLogById(logId);
+        }
+
         private void BtnDashboard_Click(object sender, RoutedEventArgs e)
         {
             MainContentControl.Content = _dashboardView;
