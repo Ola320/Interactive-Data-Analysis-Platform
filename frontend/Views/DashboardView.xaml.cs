@@ -77,7 +77,7 @@ namespace DataAnalizer.Views
                         Values = stats.Charts.CityChart.Select(c => c.PricePerSqm).ToArray(),
                         Fill = new SolidColorPaint(SKColor.Parse("#4f46e5")),
                         MaxBarWidth = 30,
-                        YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.PrimaryValue:N0} zł/m²"
+                        YToolTipLabelFormatter = (chartPoint) => $"{chartPoint.Coordinate.PrimaryValue:N0} zł/m²"
                     }
                 };
 
@@ -143,9 +143,8 @@ namespace DataAnalizer.Views
                     {
                         Values = stats.Charts.PriceVsDistance.ToArray(),
                         Mapping = (point, index) => new(point.Distance, point.Price),
-                        Fill = new SolidColorPaint(SKColor.Parse("#818cf8")) { Opacity = 0.6f },
-                        MinGeometrySize = 5,
-                        MaxGeometrySize = 15
+                        Fill = new SolidColorPaint(SKColor.Parse("#818cf8").WithAlpha(150)),
+                        GeometrySize = 10
                     }
                 };
 

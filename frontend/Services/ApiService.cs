@@ -33,29 +33,29 @@ namespace DataAnalizer.Services
             var response = await _httpClient.PostAsync("/upload", content);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<UploadResponse>();
+            return (await response.Content.ReadFromJsonAsync<UploadResponse>())!;
         }
 
         public async Task<List<LogEntry>> GetLogsAsync()
         {
             var response = await _httpClient.GetAsync("/logs");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<LogEntry>>();
+            return (await response.Content.ReadFromJsonAsync<List<LogEntry>>())!;
         }
 
         public async Task<AnalyticsData> GetLogDetailsAsync(int logId)
         {
             var response = await _httpClient.GetAsync($"/logs/{logId}");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<AnalyticsData>();
+            return (await response.Content.ReadFromJsonAsync<AnalyticsData>())!;
         }
 
-        public async Task<CityAnalytics> GetCityDetailsAsync(int logId, string cityName)
+        public async Task<CityAnalytics?> GetCityDetailsAsync(int logId, string cityName)
         {
             var response = await _httpClient.GetAsync($"/city_details/{logId}/{cityName}");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<CityAnalytics>();
+                return (await response.Content.ReadFromJsonAsync<CityAnalytics>())!;
             }
             return null;
         }

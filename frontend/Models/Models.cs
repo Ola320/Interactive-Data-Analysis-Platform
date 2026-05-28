@@ -10,10 +10,10 @@ namespace DataAnalizer.Models
         public int Id { get; set; }
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("date")]
-        public string Date { get; set; }
+        public string Date { get; set; } = null!;
     }
 
     public class UploadResponse
@@ -22,19 +22,19 @@ namespace DataAnalizer.Models
         public int Id { get; set; }
 
         [JsonPropertyName("stats")]
-        public AnalyticsData Stats { get; set; }
+        public AnalyticsData Stats { get; set; } = null!;
     }
 
     public class AnalyticsData
     {
         [JsonPropertyName("summary")]
-        public SummaryData Summary { get; set; }
+        public SummaryData Summary { get; set; } = null!;
 
         [JsonPropertyName("charts")]
-        public ChartData Charts { get; set; }
+        public ChartData Charts { get; set; } = null!;
 
         [JsonPropertyName("scratter_points")]
-        public List<ScatterPoint> ScatterPoints { get; set; }
+        public List<ScatterPoint> ScatterPoints { get; set; } = null!;
     }
 
     public class SummaryData
@@ -55,22 +55,22 @@ namespace DataAnalizer.Models
     public class ChartData
     {
         [JsonPropertyName("city_chart")]
-        public List<CityPrice> CityChart { get; set; }
+        public List<CityPrice> CityChart { get; set; } = null!;
 
         [JsonPropertyName("rooms_chart")]
-        public List<RoomDist> RoomsChart { get; set; }
+        public List<RoomDist> RoomsChart { get; set; } = null!;
 
         [JsonPropertyName("price_vs_distance")]
-        public List<PriceDistance> PriceVsDistance { get; set; }
+        public List<PriceDistance> PriceVsDistance { get; set; } = null!;
 
         [JsonPropertyName("trends")]
-        public List<TrendItem> Trends { get; set; }
+        public List<TrendItem> Trends { get; set; } = null!;
     }
 
     public class CityPrice
     {
         [JsonPropertyName("city")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("value")]
         public double PricePerSqm { get; set; }
@@ -79,7 +79,7 @@ namespace DataAnalizer.Models
     public class RoomDist
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("value")]
         public int Value { get; set; }
@@ -115,7 +115,7 @@ namespace DataAnalizer.Models
     public class CityAnalytics
     {
         [JsonPropertyName("city")]
-        public string City { get; set; }
+        public string City { get; set; } = null!;
 
         [JsonPropertyName("total_listings")]
         public int TotalListings { get; set; }

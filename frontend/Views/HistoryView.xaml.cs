@@ -1,7 +1,9 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 using DataAnalizer.Services;
+using DataAnalizer.Models;
 
 namespace DataAnalizer.Views
 {
