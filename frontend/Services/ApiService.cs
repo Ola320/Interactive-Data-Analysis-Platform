@@ -112,5 +112,16 @@ namespace DataAnalizer.Services
             var response = await _httpClient.DeleteAsync($"/logs/{logId}");
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task RenameLogAsync(int logId, string newName)
+        {
+            var payload = new
+            {
+                name = newName
+            };
+
+            var response = await _httpClient.PutAsJsonAsync($"/logs/{logId}/rename", payload);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
