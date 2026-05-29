@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using DataAnalizer.Models;
+using System.Text.Json;
 
 namespace DataAnalizer.Services
 {
@@ -13,6 +14,7 @@ namespace DataAnalizer.Services
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "http://127.0.0.1:8000";
+        private string _jwtToken;
 
         public ApiService()
         {
@@ -60,10 +62,49 @@ namespace DataAnalizer.Services
             return null;
         }
 
-        public async Task RenameLogAsync(int logId, string newName)
+        // Poprawiona metoda logowania (wyciąga access_token)
+        public async Task<bool> LoginAsync(string username, string password)
         {
-            var response = await _httpClient.PutAsync($"/logs/{logId}?name={Uri.EscapeDataString(newName)}", null);
-            response.EnsureSuccessStatusCode();
+            var payload = new LoginRequest { Username = username, Password = password };
+            var response = await _httpClient.PostAsJsonAsync("/login", payload);
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            try
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+                
+                // FastAPI domyślnie zwraca "access_token" zamiast "token"
+                if (doc.RootElement.TryGetProperty("access_token", out var tokenElement))
+                {
+                    _jwtToken = tokenElement.GetString();
+                    if (!string.IsNullOrEmpty(_jwtToken))
+                    {
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _jwtToken);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignoruj błędy parsowania; jeśli status był 200, to operacja się powiodła
+            }
+
+            return true;
+        }
+
+        // Poprawiona metoda rejestracji obsługująca 3 argumenty (w tym email)
+        public async Task<bool> RegisterAsync(string username, string password, string email)
+        {
+            var payload = new RegisterRequest 
+            { 
+                Username = username, 
+                Password = password, 
+                Email = email 
+            };
+            
+            var response = await _httpClient.PostAsJsonAsync("/register", payload);
+            return response.IsSuccessStatusCode;
         }
 
         public async Task DeleteLogAsync(int logId)
