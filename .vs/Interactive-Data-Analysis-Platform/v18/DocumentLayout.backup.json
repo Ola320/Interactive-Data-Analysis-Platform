@@ -1,0 +1,192 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\database.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\database.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|c:\\studiaitp\\wpf\\interactive-data-analysis-platform\\frontend\\services\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|solutionrelative:frontend\\services\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|c:\\studiaitp\\wpf\\interactive-data-analysis-platform\\frontend\\views\\loginview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|solutionrelative:frontend\\views\\loginview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|c:\\studiaitp\\wpf\\interactive-data-analysis-platform\\frontend\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|solutionrelative:frontend\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|c:\\studiaitp\\wpf\\interactive-data-analysis-platform\\frontend\\views\\loginview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|solutionrelative:frontend\\views\\loginview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\requirements.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\requirements.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|c:\\studiaitp\\wpf\\interactive-data-analysis-platform\\frontend\\dataanalizer.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|solutionrelative:frontend\\dataanalizer.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\main.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\main.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|c:\\studiaitp\\wpf\\interactive-data-analysis-platform\\frontend\\models\\models.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10AFE294-3973-A3EE-7AF6-4F1837D248A1}|frontend\\DataAnalizer.csproj|solutionrelative:frontend\\models\\models.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LoginView.xaml.cs",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Views\\LoginView.xaml.cs",
+              "RelativeDocumentMoniker": "frontend\\Views\\LoginView.xaml.cs",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Views\\LoginView.xaml.cs",
+              "RelativeToolTip": "frontend\\Views\\LoginView.xaml.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBMAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T20:51:08.649Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LoginView.xaml",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Views\\LoginView.xaml",
+              "RelativeDocumentMoniker": "frontend\\Views\\LoginView.xaml",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Views\\LoginView.xaml",
+              "RelativeToolTip": "frontend\\Views\\LoginView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-06T20:50:49.475Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ApiService.cs",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Services\\ApiService.cs",
+              "RelativeDocumentMoniker": "frontend\\Services\\ApiService.cs",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Services\\ApiService.cs",
+              "RelativeToolTip": "frontend\\Services\\ApiService.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAA1wGwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T20:48:55.458Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "database.py",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\database.py",
+              "RelativeDocumentMoniker": "backend\\database.py",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\database.py",
+              "RelativeToolTip": "backend\\database.py",
+              "ViewState": "AgIAACwAAAAAAAAAAAAAACwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-05-06T20:42:24.241Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "frontend\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\MainWindow.xaml.cs",
+              "RelativeToolTip": "frontend\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAtwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T20:51:45.098Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Models.cs",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Models\\Models.cs",
+              "RelativeDocumentMoniker": "frontend\\Models\\Models.cs",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\Models\\Models.cs",
+              "RelativeToolTip": "frontend\\Models\\Models.cs",
+              "ViewState": "AgIAAG8AAAAAAAAAAIBQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-06T20:47:39.172Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "requirements.txt",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\requirements.txt",
+              "RelativeDocumentMoniker": "backend\\requirements.txt",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\requirements.txt",
+              "RelativeToolTip": "backend\\requirements.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-05-06T20:42:28.525Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "main.py",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\main.py",
+              "RelativeDocumentMoniker": "backend\\main.py",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\backend\\main.py",
+              "RelativeToolTip": "backend\\main.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-05-06T20:42:42.19Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAADwAAAAAAAAAAABRwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-06T20:37:46.262Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DataAnalizer.csproj",
+              "DocumentMoniker": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\DataAnalizer.csproj",
+              "RelativeDocumentMoniker": "frontend\\DataAnalizer.csproj",
+              "ToolTip": "C:\\studiaitp\\wpf\\Interactive-Data-Analysis-Platform\\frontend\\DataAnalizer.csproj",
+              "RelativeToolTip": "frontend\\DataAnalizer.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-06T20:21:08.729Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

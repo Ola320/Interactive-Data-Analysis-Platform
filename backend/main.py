@@ -1,31 +1,51 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, EmailStr
 import uvicorn
 import os
 import io
 import json
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
+import bcrypt
+import jwt
 
-from data_service import get_city_analytics
+from data_service import get_city_analytics, clean_data, process_apartament_data
 from database import get_db_connection, init_db
-from data_service import clean_data, process_apartament_data
 
+# JWT CONFIG
+JWT_SECRET = "super_secret_key"
+JWT_ALGORITHM = "HS256"
 
+# MODELE PYDANTIC (Zintegrowane z polem e-mail)
+class RegisterModel(BaseModel):
+    username: str
+    email: str  # Dodane pole e-mail do rejestracji
+    password: str
 
+class LoginModel(BaseModel):
+    username: str
+    password: str
+
+def create_jwt_token(username: str):
+    payload = {
+        "sub": username,
+        "exp": datetime.utcnow() + timedelta(hours=12)
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+# LIFESPAN APP (Zarządzanie startem i końcem aplikacji)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not os.path.exists("uploads"):
         os.makedirs("uploads")
-    init_db()
+    init_db()  # Inicjalizacja bazy (teraz tworzy tabelę users z polem email)
     yield
 
+app = FastAPI(title="Analiza Nieruchomości API", lifespan=lifespan)
 
-
-app = FastAPI(title="Analiza Nieruchomości API",lifespan=lifespan)
-
-# Konfiguracja CORS
+# KONFIGURACJA CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,6 +54,53 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- AUTH ENDPOINTS ---
+
+@app.post("/register")
+async def register(user: RegisterModel):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Walidacja unikalności loginu oraz e-maila po stronie backendu
+    cursor.execute("SELECT id FROM users WHERE username = ? OR email = ?", (user.username, user.email))
+    if cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=400, detail="Nazwa użytkownika lub adres e-mail jest już zajęty.")
+        
+    password_hash = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
+    try:
+        cursor.execute(
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", 
+            (user.username, user.email, password_hash)
+        )
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        raise HTTPException(status_code=500, detail="Błąd zapisu w bazie danych: " + str(e))
+        
+    conn.close()
+    return {"msg": "Rejestracja udana"}
+
+@app.post("/login")
+async def login(user: LoginModel):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT password_hash FROM users WHERE username = ?", (user.username,))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if not row:
+        raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        
+    password_hash = row["password_hash"]
+    if not bcrypt.checkpw(user.password.encode(), password_hash.encode()):
+        raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        
+    token = create_jwt_token(user.username)
+    return {"access_token": token, "token_type": "bearer"}
+
+# --- POZOSTAŁE ENDPOINTY (DANE I LOGI) ---
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -41,7 +108,6 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Tylko pliki CSV są akceptowane.")
 
     try:
-        # 1. Odczyt surowych danych
         content = await file.read()
         df_raw = pd.read_csv(io.BytesIO(content))
 
@@ -53,17 +119,15 @@ async def upload_file(file: UploadFile = File(...)):
 
         # 2. Czyszczenie i analiza (Twój data_service)
         df_clean = clean_data(df_raw)
+        
         if df_clean.empty:
             raise HTTPException(status_code=400, detail="Po wyczyszczeniu danych plik jest pusty.")
 
         wyniki = process_apartament_data(df_clean)
-
-        # 3. Zapis wyczyszczonego pliku na dysk
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = f"uploads/cleaned_{timestamp}_{file.filename}"
         df_clean.to_csv(filepath, index=False)
 
-        # 4. Zapis do bazy danych
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
@@ -71,7 +135,7 @@ async def upload_file(file: UploadFile = File(...)):
             (file.filename, datetime.now().isoformat(), filepath, json.dumps(wyniki))
         )
         conn.commit()
-        log_id = cursor.lastrowid  # Pobieramy ID nowo dodanego wpisu
+        log_id = cursor.lastrowid
         conn.close()
 
         return {
@@ -82,17 +146,14 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Błąd przetwarzania: {str(e)}")
 
-
 @app.get("/logs")
 async def get_logs():
     conn = get_db_connection()
     cursor = conn.cursor()
-    # Pobieramy historię
     cursor.execute("SELECT id, name, date FROM logs ORDER BY id DESC")
     rows = cursor.fetchall()
     conn.close()
     return [dict(row) for row in rows]
-
 
 @app.get("/logs/{log_id}")
 async def get_log_details(log_id: int):
@@ -114,24 +175,20 @@ async def city_details(log_id: int, city_name: str):
     conn.close()
 
     if not row:
-        raise HTTPException(status_code=404,detail='nie znaleziono takiego miast')
+        raise HTTPException(status_code=404, detail='Nie znaleziono takiego logu raportu.')
 
     df = pd.read_csv(row['path'])
-
-    analiza = get_city_analytics(df,city_name)
+    analiza = get_city_analytics(df, city_name)
 
     if not analiza:
-        raise HTTPException(status_code=404,detail='nie znaleziono miasta')
+        raise HTTPException(status_code=404, detail='Nie znaleziono danych dla podanego miasta.')
 
     return analiza
 
-
-# Opcjonalnie: Endpoint do usuwania wpisów
 @app.delete("/logs/{log_id}")
 async def delete_log(log_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
-    # Najpierw pobierz ścieżkę do pliku, żeby go usunąć z dysku
     cursor.execute("SELECT path FROM logs WHERE id = ?", (log_id,))
     row = cursor.fetchone()
 
@@ -197,4 +254,3 @@ async def predict_price(city: str, rooms: int, distance: float, sqm: float):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
-

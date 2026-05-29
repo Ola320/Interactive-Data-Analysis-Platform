@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+#pragma warning disable CS8618 // Wyłączenie ostrzeżeń o braku inicjalizacji pól nie-null (przydatne przy modelach DTO)
+
 namespace DataAnalizer.Models
 {
     public class LogEntry
@@ -125,5 +127,35 @@ namespace DataAnalizer.Models
 
         [JsonPropertyName("avg_price_per_sqm")]
         public double AvgPricePerSqm { get; set; }
+    }
+
+    public class RegisterRequest
+    {
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+
+        [JsonPropertyName("email")]
+        public string Email { get; set; } // Dodane pole Email dopasowane do FastAPI
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+    }
+
+    public class AuthResponse
+    {
+        [JsonPropertyName("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonPropertyName("token_type")]
+        public string TokenType { get; set; }
     }
 }
