@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 import uvicorn
 import os
@@ -83,22 +84,33 @@ async def register(user: RegisterModel):
 
 @app.post("/login")
 async def login(user: LoginModel):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    cursor.execute("SELECT password_hash FROM users WHERE username = ?", (user.username,))
-    row = cursor.fetchone()
-    conn.close()
-    
-    if not row:
-        raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
         
-    password_hash = row["password_hash"]
-    if not bcrypt.checkpw(user.password.encode(), password_hash.encode()):
-        raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
+        cursor.execute("SELECT password_hash FROM users WHERE username = ?", (user.username,))
+        row = cursor.fetchone()
+        conn.close()
         
-    token = create_jwt_token(user.username)
-    return {"access_token": token, "token_type": "bearer"}
+        # ZMIANA: Zamiast 'raise', po prostu zwracamy JSON-a ze statusem 401
+        if not row:
+            return JSONResponse(status_code=401, content={"detail": "Nieprawidłowy login lub hasło"})
+            
+        try:
+            password_hash = row["password_hash"]
+        except TypeError:
+            password_hash = row[0] 
+            
+        if not bcrypt.checkpw(user.password.encode(), password_hash.encode()):
+            # ZMIANA: Zamiast 'raise', zwracamy 401
+            return JSONResponse(status_code=401, content={"detail": "Nieprawidłowy login lub hasło"})
+            
+        token = create_jwt_token(user.username)
+        return {"access_token": token, "token_type": "bearer"}
+        
+    except Exception as e:
+        # Przechwytywanie błędu serwera bez wywalania debuggera
+        return JSONResponse(status_code=500, content={"detail": "Wewnętrzny błąd serwera: " + str(e)})
 
 # --- POZOSTAŁE ENDPOINTY (DANE I LOGI) ---
 
