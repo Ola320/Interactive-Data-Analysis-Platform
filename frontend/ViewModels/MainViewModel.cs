@@ -1,3 +1,4 @@
+//sprawdza czy użytkownik jest zalogowany, przechowuje informacje o aktualnym widoku, nazwie użytkownika i czasie ostatniego logowania. Obsługuje również nawigację między widokami i wylogowywanie.
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -9,7 +10,8 @@ namespace DataAnalizer.ViewModels
     {
         private object? _currentView;
         private bool _isLoggedIn;
-        private string _username;
+        private string _username = string.Empty;
+        private string _lastLoginTime = string.Empty;
 
         public event EventHandler<object>? OnViewChanged;
 
@@ -43,12 +45,17 @@ namespace DataAnalizer.ViewModels
             set { _username = value; OnPropertyChanged(); }
         }
 
+        public string LastLoginTime
+        {
+            get => _lastLoginTime;
+            set { _lastLoginTime = value; OnPropertyChanged(); }
+        }
+
         public ICommand NavigateCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public MainViewModel()
         {
-            _username = string.Empty;
             NavigateCommand = new RelayCommand(Navigate);
             LogoutCommand = new RelayCommand(Logout);
             IsLoggedIn = false;
@@ -65,12 +72,14 @@ namespace DataAnalizer.ViewModels
         public void LoginSuccess(string username)
         {
             Username = username;
+            LastLoginTime = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
             IsLoggedIn = true;
         }
 
         private void Logout(object? obj)
         {
             Username = string.Empty;
+            LastLoginTime = string.Empty;
             IsLoggedIn = false;
             CurrentView = "Login";
         }
