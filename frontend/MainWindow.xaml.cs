@@ -1,5 +1,6 @@
 using System.Windows;
 using DataAnalizer.Views;
+using DataAnalizer.ViewModels;
 
 namespace DataAnalizer
 {
@@ -9,17 +10,33 @@ namespace DataAnalizer
         private HistoryView _historyView;
         private CityDetailsView _cityDetailsView;
         private LoginView _loginView;
+        private ProfileView _profileView;
+
+        public MainViewModel ViewModel { get; }
 
         public MainWindow()
         {
             InitializeComponent();
+            
             _dashboardView = new DashboardView();
             _historyView = new HistoryView();
             _cityDetailsView = new CityDetailsView();
             _loginView = new LoginView();
+            _profileView = new ProfileView();
 
-            // Load default view
+            ViewModel = new MainViewModel();
+            this.DataContext = ViewModel;
+
+            // Domyślny start na oknie logowania
             MainContentControl.Content = _loginView;
+            ViewModel.CurrentView = _loginView;
+
+            // Monitorowanie powrotu do ekranu logowania z poziomu MVVM
+            ViewModel.OnViewChanged += (sender, newView) => {
+                if (newView is string viewName && viewName == "Login") {
+                    MainContentControl.Content = _loginView;
+                }
+            };
         }
 
         public void ShowDashboardWithLog(int logId)
@@ -43,10 +60,21 @@ namespace DataAnalizer
             MainContentControl.Content = _cityDetailsView;
         }
 
-        // Metoda do przełączania na główny widok po zalogowaniu
+        private void BtnProfile_Click(object sender, RoutedEventArgs e)
+        {
+            MainContentControl.Content = _profileView;
+        }
+
         public void ShowMainView()
         {
             MainContentControl.Content = _dashboardView;
+            
+            string user = "Użytkownik";
+            if (_loginView.FindName("UsernameBox") is System.Windows.Controls.TextBox usernameBox && !string.IsNullOrEmpty(usernameBox.Text))
+            {
+                user = usernameBox.Text.Trim();
+            }
+            ViewModel.LoginSuccess(user);
         }
     }
 }

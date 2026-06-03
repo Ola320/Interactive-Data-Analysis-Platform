@@ -11,8 +11,9 @@
         Background="#f8fafc"
         FontFamily="Segoe UI">
 
-    <!-- Styles -->
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
         <Style x:Key="NavButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#94a3b8"/>
@@ -44,7 +45,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar -->
         <Border Grid.Column="0" Background="#0f172a" CornerRadius="0,20,20,0" Margin="0,0,0,0">
             <Grid>
                 <Grid.RowDefinitions>
@@ -53,14 +53,12 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Logo -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="25,0,0,0">
                     <lucide:PackIconLucide Kind="Building2" Foreground="#4f46e5" Width="28" Height="28"/>
                     <TextBlock Text="RealData" Foreground="White" FontSize="22" FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Navigation -->
-                <StackPanel Grid.Row="1" Margin="15,20,15,0">
+                <StackPanel Grid.Row="1" Margin="15,20,15,0" IsEnabled="{Binding IsLoggedIn}">
                     <TextBlock Text="MAIN MENU" Foreground="#64748b" FontSize="11" FontWeight="Bold" Margin="10,0,0,10"/>
 
                     <Button x:Name="BtnDashboard" Click="BtnDashboard_Click" Style="{StaticResource NavButtonStyle}" Margin="0,0,0,5">
@@ -85,25 +83,30 @@
                     </Button>
                 </StackPanel>
 
-                <!-- Pro Plan Banner -->
                 <Border Grid.Row="2" Background="#1e293b" CornerRadius="12" Margin="15,0,15,20" Padding="15">
                     <StackPanel>
-                        <TextBlock Text="Pro Plan" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
-                        <TextBlock Text="Unlock all features" Foreground="#94a3b8" FontSize="12" Margin="0,2,0,10"/>
-                        <Button Content="Upgrade" Background="#4f46e5" Foreground="White" BorderThickness="0" Padding="0,6" Cursor="Hand"/>
+                        <StackPanel Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="Session Active" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                            <TextBlock Text="Click below to sign out" Foreground="#94a3b8" FontSize="12" Margin="0,2,0,10"/>
+                            <Button Command="{Binding LogoutCommand}" Content="Log out" Background="#b91c1c" Foreground="White" BorderThickness="0" Padding="0,6" Cursor="Hand" FontWeight="Medium"/>
+                        </StackPanel>
+
+                        <StackPanel Visibility="{Binding IsLoggedOut, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="Authentication" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                            <TextBlock Text="Please sign in to access data" Foreground="#94a3b8" FontSize="12" Margin="0,2,0,10"/>
+                            <Button Command="{Binding NavigateCommand}" CommandParameter="Login" Content="Log in" Background="#4f46e5" Foreground="White" BorderThickness="0" Padding="0,6" Cursor="Hand" FontWeight="Medium"/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </Grid>
         </Border>
 
-        <!-- Main Content Area -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="70"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Top Bar -->
             <Border Grid.Row="0" Background="White" BorderBrush="#e2e8f0" BorderThickness="0,0,0,1">
                 <Grid Margin="30,0">
                     <Grid.ColumnDefinitions>
@@ -111,7 +114,6 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Search -->
                     <Border Background="#f1f5f9" CornerRadius="8" Width="400" HorizontalAlignment="Left" Height="36" Padding="10,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <lucide:PackIconLucide Kind="Search" Foreground="#94a3b8" Width="16" Height="16"/>
@@ -119,19 +121,16 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- User Profile -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <lucide:PackIconLucide Kind="Bell" Foreground="#64748b" Width="20" Height="20" Margin="0,0,20,0" Cursor="Hand"/>
-                        <Border Width="1" Height="30" Background="#e2e8f0" Margin="0,0,20,0"/>
-                        <Border Background="#e0e7ff" CornerRadius="16" Width="32" Height="32" Margin="0,0,10,0">
-                            <TextBlock Text="W" Foreground="#4f46e5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock Text="Welcome, Admin" Foreground="#334155" FontWeight="Medium" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="{Binding IsLoggedIn}">
+                        <Button Click="BtnProfile_Click" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                            <Border Background="#e0e7ff" CornerRadius="16" Width="32" Height="32">
+                                <lucide:PackIconLucide Kind="User" Foreground="#4f46e5" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <!-- Dynamic View Area -->
             <ContentControl x:Name="MainContentControl" Grid.Row="1" Margin="30"/>
         </Grid>
     </Grid>

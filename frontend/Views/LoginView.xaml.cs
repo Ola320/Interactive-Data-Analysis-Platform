@@ -49,16 +49,17 @@ namespace DataAnalizer.Views
             {
                 ShowStatus("Zalogowano pomyślnie! Ładowanie...", true);
                 
-                // Opóźnienie dla efektu wizualnego komunikatu sukcesu
                 await System.Threading.Tasks.Task.Delay(1000); 
                 
                 var mainWindow = Window.GetWindow(this) as MainWindow;
+                // Wywołanie Twojej niezmienionej funkcji
                 mainWindow?.ShowMainView();
             }
             else
             {
                 ShowStatus("Błędny login lub hasło.", false);
             }
+            
         }
 
         private async void Register_Click(object sender, RoutedEventArgs e)
