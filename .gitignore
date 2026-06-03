@@ -21,3 +21,5 @@ TestResults/
 ## Pliki systemowe
 Thumbs.db
 desktop.ini
+../frontend/obj/
+../frontend/.vs/
