@@ -2,6 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using DataAnalizer.Services;
 
@@ -32,6 +33,50 @@ namespace DataAnalizer.Views
             HideStatus();
         }
 
+        // Obsługa naciśnięcia klawisza Enter w formularzu logowania
+        private void LoginPanel_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (Keyboard.FocusedElement == UsernameBox)
+                {
+                    e.Handled = true;
+                    PasswordBox.Focus();
+                }
+                else if (Keyboard.FocusedElement == PasswordBox)
+                {
+                    e.Handled = true;
+                    Login_Click(this, new RoutedEventArgs());
+                }
+            }
+        }
+
+        // Obsługa naciśnięcia klawisza Enter w formularzu rejestracji
+        private void RegisterPanel_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = true;
+
+                if (Keyboard.FocusedElement == RegUsernameBox)
+                {
+                    RegEmailBox.Focus();
+                }
+                else if (Keyboard.FocusedElement == RegEmailBox)
+                {
+                    RegPasswordBox.Focus();
+                }
+                else if (Keyboard.FocusedElement == RegPasswordBox)
+                {
+                    RegConfirmPasswordBox.Focus();
+                }
+                else if (Keyboard.FocusedElement == RegConfirmPasswordBox)
+                {
+                    Register_Click(this, new RoutedEventArgs());
+                }
+            }
+        }
+
         private async void Login_Click(object sender, RoutedEventArgs e)
         {
             HideStatus();
@@ -52,14 +97,27 @@ namespace DataAnalizer.Views
                 await System.Threading.Tasks.Task.Delay(1000); 
                 
                 var mainWindow = Window.GetWindow(this) as MainWindow;
-                // Wywołanie Twojej niezmienionej funkcji
                 mainWindow?.ShowMainView();
+
+                ClearForm();
             }
             else
             {
                 ShowStatus("Błędny login lub hasło.", false);
+                PasswordBox.Clear();
             }
+        }
+
+        private void ClearForm()
+        {
+            PasswordBox.Clear();
             
+            if (RememberMeCheck.IsChecked != true)
+            {
+                UsernameBox.Clear();
+            }
+
+            HideStatus();
         }
 
         private async void Register_Click(object sender, RoutedEventArgs e)
@@ -71,7 +129,7 @@ namespace DataAnalizer.Views
             var password = RegPasswordBox.Password;
             var confirmPassword = RegConfirmPasswordBox.Password;
 
-            // --- WALIDACJA PO STRONIE KLIENTA (WPF) ---
+            // --- WALIDACJA ---
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || 
                 string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
             {
@@ -85,7 +143,6 @@ namespace DataAnalizer.Views
                 return;
             }
 
-            // Walidacja Email regular expression
             var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
             if (!emailRegex.IsMatch(email))
             {
@@ -93,7 +150,6 @@ namespace DataAnalizer.Views
                 return;
             }
 
-            // Walidacja siły hasła (np. min 6 znaków)
             if (password.Length < 6)
             {
                 ShowStatus("Hasło musi składać się z co najmniej 6 znaków.", false);
@@ -106,17 +162,35 @@ namespace DataAnalizer.Views
                 return;
             }
 
-            // --- ZAPYTANIE DO API ---
-            var success = await _apiService.RegisterAsync(username, password, email); 
+            // --- REJESTRACJA W API ---
+            var registerSuccess = await _apiService.RegisterAsync(username, password, email); 
             
-            if (success)
+            if (registerSuccess)
             {
-                ShowStatus("Konto utworzone pomyślnie! Możesz się zalogować.", true);
-                // Czyszczenie pól rejestracji
+                ShowStatus("Konto utworzone! Trwa automatyczne logowanie...", true);
+                
                 RegUsernameBox.Clear();
                 RegEmailBox.Clear();
                 RegPasswordBox.Clear();
                 RegConfirmPasswordBox.Clear();
+
+                // --- AUTOMATYCZNE LOGOWANIE ---
+                var loginSuccess = await _apiService.LoginAsync(username, password);
+                
+                if (loginSuccess)
+                {
+                    await System.Threading.Tasks.Task.Delay(1000); 
+
+                    var mainWindow = Window.GetWindow(this) as MainWindow;
+                    mainWindow?.ShowMainView();
+
+                    ClearForm();
+                }
+                else
+                {
+                    ShowStatus("Konto utworzone, ale automatyczne logowanie się nie powiodło. Zaloguj się ręcznie.", false);
+                    SwitchToLogin_Click(this, new RoutedEventArgs());
+                }
             }
             else
             {
@@ -131,13 +205,13 @@ namespace DataAnalizer.Views
 
             if (isSuccess)
             {
-                StatusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#bbf7d0")); // jasnozielony
-                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#15803d")); // ciemnozielony
+                StatusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#bbf7d0"));
+                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#15803d"));
             }
             else
             {
-                StatusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fee2e2")); // jasnoczerwony
-                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b91c1c")); // ciemnoczerwony
+                StatusBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fee2e2"));
+                StatusText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b91c1c"));
             }
         }
 
