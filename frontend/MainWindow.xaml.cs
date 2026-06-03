@@ -31,10 +31,17 @@ namespace DataAnalizer
             MainContentControl.Content = _loginView;
             ViewModel.CurrentView = _loginView;
 
-            // Monitorowanie powrotu do ekranu logowania z poziomu MVVM
+            // Monitorowanie powrotu do ekranu logowania (np. po użyciu przycisku "Log out")
             ViewModel.OnViewChanged += (sender, newView) => {
-                if (newView is string viewName && viewName == "Login") {
+                if (newView is string viewName && viewName == "Login") 
+                {
                     MainContentControl.Content = _loginView;
+                    
+                    // Czyścimy formularz w LoginViewModel przy wylogowaniu
+                    if (_loginView.DataContext is LoginViewModel loginVM)
+                    {
+                        loginVM.ResetToLoginView();
+                    }
                 }
             };
         }
@@ -69,11 +76,21 @@ namespace DataAnalizer
         {
             MainContentControl.Content = _dashboardView;
             
+            // ZGODNE Z MVVM: Pobieranie nazwy użytkownika bezpośrednio z ViewModelu logowania
             string user = "Użytkownik";
-            if (_loginView.FindName("UsernameBox") is System.Windows.Controls.TextBox usernameBox && !string.IsNullOrEmpty(usernameBox.Text))
+            if (_loginView.DataContext is LoginViewModel loginViewModel)
             {
-                user = usernameBox.Text.Trim();
+                // Sprawdzamy login z panelu logowania lub panelu rejestracji
+                if (!string.IsNullOrEmpty(loginViewModel.Username))
+                {
+                    user = loginViewModel.Username;
+                }
+                else if (!string.IsNullOrEmpty(loginViewModel.RegUsername))
+                {
+                    user = loginViewModel.RegUsername; 
+                }
             }
+            
             ViewModel.LoginSuccess(user);
         }
     }

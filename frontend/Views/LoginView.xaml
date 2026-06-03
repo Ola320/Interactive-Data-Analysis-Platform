@@ -20,10 +20,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="8">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
                     </ControlTemplate>
@@ -42,10 +39,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="PasswordBox">
-                        <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="8">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
                             <ScrollViewer x:Name="PART_ContentHost"/>
                         </Border>
                     </ControlTemplate>
@@ -101,52 +95,52 @@
 
                 <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,15">
                     <lucide:PackIconLucide Kind="Building2" Foreground="#4f46e5" Width="36" Height="36" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                    <TextBlock x:Name="TitleText" Text="Zaloguj się do platformy" FontSize="20" FontWeight="Bold" Foreground="#0f172a" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding TitleText}" FontSize="20" FontWeight="Bold" Foreground="#0f172a" HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         
-                        <StackPanel x:Name="LoginPanel" Visibility="Visible" KeyDown="LoginPanel_KeyDown">
+                        <StackPanel Visibility="{Binding LoginPanelVisibility}" KeyDown="LoginPanel_KeyDown">
                             <TextBlock Text="Nazwa użytkownika" Foreground="#475569" FontWeight="Medium" Margin="0,0,0,6"/>
-                            <TextBox x:Name="UsernameBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
+                            <TextBox x:Name="UsernameBox" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,15"/>
 
                             <TextBlock Text="Hasło" Foreground="#475569" FontWeight="Medium" Margin="0,0,0,6"/>
-                            <PasswordBox x:Name="PasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,10"/>
+                            <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,10"/>
 
-                            <CheckBox x:Name="RememberMeCheck" Content="Zapamiętaj mój login" Foreground="#475569" Margin="2,0,0,15" Focusable="False"/>
+                            <CheckBox Content="Zapamiętaj mój login" IsChecked="{Binding RememberMe}" Foreground="#475569" Margin="2,0,0,15" Focusable="False"/>
 
-                            <Button Content="Zaloguj się" Style="{StaticResource PrimaryButton}" Click="Login_Click" Margin="0,0,0,15"/>
+                            <Button Content="Zaloguj się" Command="{Binding LoginCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,0,15"/>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Text="Nie masz konta? " Foreground="#64748b"/>
-                                <Button Content="Zarejestruj się" Style="{StaticResource LinkButton}" Click="SwitchToRegister_Click"/>
+                                <Button Content="Zarejestruj się" Command="{Binding SwitchToRegisterCommand}" Style="{StaticResource LinkButton}" />
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel x:Name="RegisterPanel" Visibility="Collapsed" KeyDown="RegisterPanel_KeyDown">
+                        <StackPanel Visibility="{Binding RegisterPanelVisibility}" KeyDown="RegisterPanel_KeyDown">
                             <TextBlock Text="Nazwa użytkownika" Foreground="#475569" FontWeight="Medium" Margin="0,0,0,4"/>
-                            <TextBox x:Name="RegUsernameBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,10"/>
+                            <TextBox x:Name="RegUsernameBox" Text="{Binding RegUsername, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Adres E-mail" Foreground="#475569" FontWeight="Medium" Margin="0,0,0,4"/>
-                            <TextBox x:Name="RegEmailBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,10"/>
+                            <TextBox x:Name="RegEmailBox" Text="{Binding RegEmail, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Hasło" Foreground="#475569" FontWeight="Medium" Margin="0,0,0,4"/>
-                            <PasswordBox x:Name="RegPasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,10"/>
+                            <PasswordBox x:Name="RegPasswordBox" PasswordChanged="RegPasswordBox_PasswordChanged" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Powtórz hasło" Foreground="#475569" FontWeight="Medium" Margin="0,0,0,4"/>
-                            <PasswordBox x:Name="RegConfirmPasswordBox" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,15"/>
+                            <PasswordBox x:Name="RegConfirmPasswordBox" PasswordChanged="RegConfirmPasswordBox_PasswordChanged" Style="{StaticResource ModernPasswordBox}" Margin="0,0,0,15"/>
 
-                            <Button Content="Utwórz konto" Style="{StaticResource PrimaryButton}" Click="Register_Click" Margin="0,0,0,12"/>
+                            <Button Content="Utwórz konto" Command="{Binding RegisterCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,0,12"/>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Text="Masz już konto? " Foreground="#64748b"/>
-                                <Button Content="Zaloguj się" Style="{StaticResource LinkButton}" Click="SwitchToLogin_Click"/>
+                                <Button Content="Zaloguj się" Command="{Binding SwitchToLoginCommand}" Style="{StaticResource LinkButton}"/>
                             </StackPanel>
                         </StackPanel>
 
-                        <Border x:Name="StatusBorder" CornerRadius="8" Padding="12,10" Margin="0,15,0,5" Visibility="Collapsed">
-                            <TextBlock x:Name="StatusText" TextWrapping="Wrap" FontSize="13" FontWeight="Medium" HorizontalAlignment="Center"/>
+                        <Border CornerRadius="8" Padding="12,10" Margin="0,15,0,5" Visibility="{Binding StatusVisibility}" Background="{Binding StatusBackground}">
+                            <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusForeground}" TextWrapping="Wrap" FontSize="13" FontWeight="Medium" HorizontalAlignment="Center"/>
                         </Border>
                     </StackPanel>
                 </ScrollViewer>
