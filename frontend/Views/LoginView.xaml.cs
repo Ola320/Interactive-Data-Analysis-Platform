@@ -12,6 +12,11 @@ namespace DataAnalizer.Views
     {
         private readonly ApiService _apiService = new ApiService();
 
+        public System.Windows.Controls.CheckBox GetRememberMeCheck()
+        {
+            return RememberMeCheck;
+        }
+
         public LoginView()
         {
             InitializeComponent();
@@ -31,6 +36,16 @@ namespace DataAnalizer.Views
             RegisterPanel.Visibility = Visibility.Collapsed;
             LoginPanel.Visibility = Visibility.Visible;
             HideStatus();
+        }
+
+        // Metoda publiczna: Wywoływana w MainWindow podczas operacji Logout
+        public void ResetToLoginView()
+        {
+            TitleText.Text = "Zaloguj się do platformy";
+            RegisterPanel.Visibility = Visibility.Collapsed;
+            LoginPanel.Visibility = Visibility.Visible;
+            
+            ClearForm(); 
         }
 
         // Obsługa naciśnięcia klawisza Enter w formularzu logowania
@@ -129,7 +144,7 @@ namespace DataAnalizer.Views
             var password = RegPasswordBox.Password;
             var confirmPassword = RegConfirmPasswordBox.Password;
 
-            // --- WALIDACJA ---
+            // 1. Walidacja pustych pól
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || 
                 string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
             {
@@ -137,12 +152,14 @@ namespace DataAnalizer.Views
                 return;
             }
 
+            // 2. Walidacja długości loginu
             if (username.Length < 3)
             {
                 ShowStatus("Nazwa użytkownika musi mieć min. 3 znaki.", false);
                 return;
             }
 
+            // 3. Walidacja formatu Email
             var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
             if (!emailRegex.IsMatch(email))
             {
@@ -150,12 +167,20 @@ namespace DataAnalizer.Views
                 return;
             }
 
-            if (password.Length < 6)
+            // 4. ULEPSZONA WALIDACJA SIŁY HASŁA (Regex)
+            // Kryteria: min. 8 znaków, 1 wielka litera, 1 mała litera, 1 cyfra, 1 znak specjalny
+            var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?& Polish_special_chars_optional # ^ _ - + = / | \\ : ; ' "" < > , . ?]).{8,}$");
+            
+            // Jeśli standardowy zestaw znaków specjalnych wystarczy, poniższy prostszy zapis jest w 100% poprawny:
+            // @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#^+-]).{8,}$"
+
+            if (!passwordRegex.IsMatch(password))
             {
-                ShowStatus("Hasło musi składać się z co najmniej 6 znaków.", false);
+                ShowStatus("Hasło musi mieć min. 8 znaków, zawierać wielką i małą literę, cyfrę oraz znak specjalny (np. !, @, #, $, %).", false);
                 return;
             }
 
+            // 5. Walidacja zgodności haseł
             if (password != confirmPassword)
             {
                 ShowStatus("Hasła nie są identyczne!", false);
@@ -189,7 +214,7 @@ namespace DataAnalizer.Views
                 else
                 {
                     ShowStatus("Konto utworzone, ale automatyczne logowanie się nie powiodło. Zaloguj się ręcznie.", false);
-                    SwitchToLogin_Click(this, new RoutedEventArgs());
+                    ResetToLoginView();
                 }
             }
             else
