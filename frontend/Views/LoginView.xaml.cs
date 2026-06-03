@@ -8,6 +8,11 @@ namespace DataAnalizer.Views
     public partial class LoginView : UserControl
     {
         private readonly LoginViewModel _viewModel;
+        
+        // Zmienne do zapobiegania zapętleniu podczas przepisywania haseł
+        private bool _isSyncingLoginPwd = false;
+        private bool _isSyncingRegPwd = false;
+        private bool _isSyncingRegConfPwd = false;
 
         public LoginView()
         {
@@ -15,17 +20,17 @@ namespace DataAnalizer.Views
             _viewModel = new LoginViewModel();
             this.DataContext = _viewModel;
 
-            // Kiedy logowanie się powiedzie, ViewModel poinformuje nas tutaj, 
-            // a my bezpiecznie przełączymy okno z poziomu View.
             _viewModel.OnLoginSuccess = () =>
             {
                 var mainWindow = Window.GetWindow(this) as MainWindow;
                 mainWindow?.ShowMainView();
                 
-                // Po pomyślnym zalogowaniu resetujemy pola haseł (UI)
                 PasswordBox.Clear();
+                PasswordTextBox.Clear();
                 RegPasswordBox.Clear();
+                RegPasswordTextBox.Clear();
                 RegConfirmPasswordBox.Clear();
+                RegConfirmPasswordTextBox.Clear();
             };
         }
 
@@ -33,21 +38,78 @@ namespace DataAnalizer.Views
         {
             _viewModel.ResetToLoginView();
             PasswordBox.Clear();
+            PasswordTextBox.Clear();
             RegPasswordBox.Clear();
+            RegPasswordTextBox.Clear();
             RegConfirmPasswordBox.Clear();
+            RegConfirmPasswordTextBox.Clear();
         }
 
-        // Aktualizacja haseł w ViewModel (dla bezpieczeństwa PasswordBox nie wspiera Bindingu bez modyfikacji)
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e) 
-            => _viewModel.Password = PasswordBox.Password;
+        // ==========================================
+        // SYNCHRONIZACJA HASEŁ - LOGOWANIE
+        // ==========================================
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isSyncingLoginPwd) return;
+            _isSyncingLoginPwd = true;
+            _viewModel.Password = PasswordBox.Password;
+            PasswordTextBox.Text = PasswordBox.Password;
+            _isSyncingLoginPwd = false;
+        }
 
-        private void RegPasswordBox_PasswordChanged(object sender, RoutedEventArgs e) 
-            => _viewModel.RegPassword = RegPasswordBox.Password;
+        private void PasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isSyncingLoginPwd) return;
+            _isSyncingLoginPwd = true;
+            _viewModel.Password = PasswordTextBox.Text;
+            PasswordBox.Password = PasswordTextBox.Text;
+            _isSyncingLoginPwd = false;
+        }
 
-        private void RegConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e) 
-            => _viewModel.RegConfirmPassword = RegConfirmPasswordBox.Password;
+        // ==========================================
+        // SYNCHRONIZACJA HASEŁ - REJESTRACJA
+        // ==========================================
+        private void RegPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isSyncingRegPwd) return;
+            _isSyncingRegPwd = true;
+            _viewModel.RegPassword = RegPasswordBox.Password;
+            RegPasswordTextBox.Text = RegPasswordBox.Password;
+            _viewModel.UpdatePasswordStrength(RegPasswordBox.Password);
+            _isSyncingRegPwd = false;
+        }
 
-        // Obsługa naciśnięcia Enter
+        private void RegPasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isSyncingRegPwd) return;
+            _isSyncingRegPwd = true;
+            _viewModel.RegPassword = RegPasswordTextBox.Text;
+            RegPasswordBox.Password = RegPasswordTextBox.Text;
+            _viewModel.UpdatePasswordStrength(RegPasswordTextBox.Text);
+            _isSyncingRegPwd = false;
+        }
+
+        private void RegConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_isSyncingRegConfPwd) return;
+            _isSyncingRegConfPwd = true;
+            _viewModel.RegConfirmPassword = RegConfirmPasswordBox.Password;
+            RegConfirmPasswordTextBox.Text = RegConfirmPasswordBox.Password;
+            _isSyncingRegConfPwd = false;
+        }
+
+        private void RegConfirmPasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isSyncingRegConfPwd) return;
+            _isSyncingRegConfPwd = true;
+            _viewModel.RegConfirmPassword = RegConfirmPasswordTextBox.Text;
+            RegConfirmPasswordBox.Password = RegConfirmPasswordTextBox.Text;
+            _isSyncingRegConfPwd = false;
+        }
+
+        // ==========================================
+        // OBSŁUGA KLAWISZA ENTER
+        // ==========================================
         private void LoginPanel_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -55,9 +117,10 @@ namespace DataAnalizer.Views
                 if (Keyboard.FocusedElement == UsernameBox)
                 {
                     e.Handled = true;
-                    PasswordBox.Focus();
+                    if (_viewModel.IsPasswordVisible) PasswordTextBox.Focus();
+                    else PasswordBox.Focus();
                 }
-                else if (Keyboard.FocusedElement == PasswordBox)
+                else if (Keyboard.FocusedElement == PasswordBox || Keyboard.FocusedElement == PasswordTextBox)
                 {
                     e.Handled = true;
                     if (_viewModel.LoginCommand.CanExecute(null))
@@ -75,10 +138,16 @@ namespace DataAnalizer.Views
                 if (Keyboard.FocusedElement == RegUsernameBox)
                     RegEmailBox.Focus();
                 else if (Keyboard.FocusedElement == RegEmailBox)
-                    RegPasswordBox.Focus();
-                else if (Keyboard.FocusedElement == RegPasswordBox)
-                    RegConfirmPasswordBox.Focus();
-                else if (Keyboard.FocusedElement == RegConfirmPasswordBox)
+                {
+                    if (_viewModel.IsRegPasswordVisible) RegPasswordTextBox.Focus();
+                    else RegPasswordBox.Focus();
+                }
+                else if (Keyboard.FocusedElement == RegPasswordBox || Keyboard.FocusedElement == RegPasswordTextBox)
+                {
+                    if (_viewModel.IsRegConfirmPasswordVisible) RegConfirmPasswordTextBox.Focus();
+                    else RegConfirmPasswordBox.Focus();
+                }
+                else if (Keyboard.FocusedElement == RegConfirmPasswordBox || Keyboard.FocusedElement == RegConfirmPasswordTextBox)
                 {
                     if (_viewModel.RegisterCommand.CanExecute(null))
                         _viewModel.RegisterCommand.Execute(null);

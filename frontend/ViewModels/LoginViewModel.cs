@@ -14,7 +14,6 @@ namespace DataAnalizer.ViewModels
     {
         private readonly ApiService _apiService = new ApiService();
 
-        // Zdarzenie do informowania widoku, że logowanie się udało (aby zmienić okno)
         public Action? OnLoginSuccess { get; set; }
 
         #region Właściwości (Properties)
@@ -36,6 +35,16 @@ namespace DataAnalizer.ViewModels
         private bool _rememberMe;
         public bool RememberMe { get => _rememberMe; set { _rememberMe = value; OnPropertyChanged(); } }
 
+        // Widoczność Haseł (Oko)
+        private bool _isPasswordVisible;
+        public bool IsPasswordVisible { get => _isPasswordVisible; set { _isPasswordVisible = value; OnPropertyChanged(); } }
+
+        private bool _isRegPasswordVisible;
+        public bool IsRegPasswordVisible { get => _isRegPasswordVisible; set { _isRegPasswordVisible = value; OnPropertyChanged(); } }
+
+        private bool _isRegConfirmPasswordVisible;
+        public bool IsRegConfirmPasswordVisible { get => _isRegConfirmPasswordVisible; set { _isRegConfirmPasswordVisible = value; OnPropertyChanged(); } }
+
         // Dane Rejestracji
         private string _regUsername = string.Empty;
         public string RegUsername { get => _regUsername; set { _regUsername = value; OnPropertyChanged(); } }
@@ -45,6 +54,19 @@ namespace DataAnalizer.ViewModels
 
         public string RegPassword { get; set; } = string.Empty;
         public string RegConfirmPassword { get; set; } = string.Empty;
+
+        // Wskaźnik siły hasła
+        private double _passwordStrengthValue;
+        public double PasswordStrengthValue { get => _passwordStrengthValue; set { _passwordStrengthValue = value; OnPropertyChanged(); } }
+
+        private Brush _passwordStrengthColor = Brushes.Transparent;
+        public Brush PasswordStrengthColor { get => _passwordStrengthColor; set { _passwordStrengthColor = value; OnPropertyChanged(); } }
+
+        private string _passwordStrengthLabel = string.Empty;
+        public string PasswordStrengthLabel { get => _passwordStrengthLabel; set { _passwordStrengthLabel = value; OnPropertyChanged(); } }
+
+        private Visibility _passwordStrengthVisibility = Visibility.Collapsed;
+        public Visibility PasswordStrengthVisibility { get => _passwordStrengthVisibility; set { _passwordStrengthVisibility = value; OnPropertyChanged(); } }
 
         // Status 
         private string _statusText = string.Empty;
@@ -65,6 +87,9 @@ namespace DataAnalizer.ViewModels
         public ICommand SwitchToLoginCommand { get; }
         public ICommand LoginCommand { get; }
         public ICommand RegisterCommand { get; }
+        public ICommand TogglePasswordCommand { get; }
+        public ICommand ToggleRegPasswordCommand { get; }
+        public ICommand ToggleRegConfirmPasswordCommand { get; }
         #endregion
 
         public LoginViewModel()
@@ -73,6 +98,54 @@ namespace DataAnalizer.ViewModels
             SwitchToLoginCommand = new RelayCommand(_ => SwitchToLogin());
             LoginCommand = new RelayCommand(async _ => await ExecuteLogin());
             RegisterCommand = new RelayCommand(async _ => await ExecuteRegister());
+
+            TogglePasswordCommand = new RelayCommand(_ => IsPasswordVisible = !IsPasswordVisible);
+            ToggleRegPasswordCommand = new RelayCommand(_ => IsRegPasswordVisible = !IsRegPasswordVisible);
+            ToggleRegConfirmPasswordCommand = new RelayCommand(_ => IsRegConfirmPasswordVisible = !IsRegConfirmPasswordVisible);
+        }
+
+        public void UpdatePasswordStrength(string password)
+        {
+            RegPassword = password; 
+            
+            if (string.IsNullOrEmpty(password))
+            {
+                PasswordStrengthVisibility = Visibility.Collapsed;
+                PasswordStrengthValue = 0;
+                return;
+            }
+
+            PasswordStrengthVisibility = Visibility.Visible;
+            int score = 0;
+            
+            if (password.Length >= 8) score += 25;
+            if (Regex.IsMatch(password, @"[a-z]")) score += 15;
+            if (Regex.IsMatch(password, @"[A-Z]")) score += 20;
+            if (Regex.IsMatch(password, @"\d")) score += 20;
+            if (Regex.IsMatch(password, @"[@$!%*?&_#^+-]")) score += 20;
+
+            PasswordStrengthValue = score;
+
+            if (score < 40)
+            {
+                PasswordStrengthColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ef4444"));
+                PasswordStrengthLabel = "Słabe (za krótkie lub brak różnorodności)";
+            }
+            else if (score < 80)
+            {
+                PasswordStrengthColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f59e0b"));
+                PasswordStrengthLabel = "Średnie (dodaj cyfry, wielkie litery lub znaki specjalne)";
+            }
+            else if (score < 100)
+            {
+                PasswordStrengthColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#84cc16"));
+                PasswordStrengthLabel = "Dobre";
+            }
+            else
+            {
+                PasswordStrengthColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#22c55e"));
+                PasswordStrengthLabel = "Silne!";
+            }
         }
 
         private void SwitchToRegister()
@@ -99,6 +172,12 @@ namespace DataAnalizer.ViewModels
             RegEmail = string.Empty;
             RegPassword = string.Empty;
             RegConfirmPassword = string.Empty;
+            PasswordStrengthVisibility = Visibility.Collapsed;
+            
+            IsPasswordVisible = false;
+            IsRegPasswordVisible = false;
+            IsRegConfirmPasswordVisible = false;
+            
             HideStatus();
         }
 
@@ -123,8 +202,6 @@ namespace DataAnalizer.ViewModels
             {
                 ShowStatus("Zalogowano pomyślnie! Ładowanie...", true);
                 await Task.Delay(1000);
-                
-                // Wywołaj akcję zmiany widoku w MainWindow
                 OnLoginSuccess?.Invoke();
                 ClearForm();
             }
