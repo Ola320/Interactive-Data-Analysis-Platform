@@ -26,7 +26,6 @@ namespace DataAnalizer.ViewModels
         private Visibility _registerPanelVisibility = Visibility.Collapsed;
         public Visibility RegisterPanelVisibility { get => _registerPanelVisibility; set { _registerPanelVisibility = value; OnPropertyChanged(); } }
 
-        // Dane Logowania
         private string _username = string.Empty;
         public string Username { get => _username; set { _username = value; OnPropertyChanged(); } }
 
@@ -35,7 +34,6 @@ namespace DataAnalizer.ViewModels
         private bool _rememberMe;
         public bool RememberMe { get => _rememberMe; set { _rememberMe = value; OnPropertyChanged(); } }
 
-        // Widoczność Haseł (Oko)
         private bool _isPasswordVisible;
         public bool IsPasswordVisible { get => _isPasswordVisible; set { _isPasswordVisible = value; OnPropertyChanged(); } }
 
@@ -45,7 +43,6 @@ namespace DataAnalizer.ViewModels
         private bool _isRegConfirmPasswordVisible;
         public bool IsRegConfirmPasswordVisible { get => _isRegConfirmPasswordVisible; set { _isRegConfirmPasswordVisible = value; OnPropertyChanged(); } }
 
-        // Dane Rejestracji
         private string _regUsername = string.Empty;
         public string RegUsername { get => _regUsername; set { _regUsername = value; OnPropertyChanged(); } }
 
@@ -55,7 +52,6 @@ namespace DataAnalizer.ViewModels
         public string RegPassword { get; set; } = string.Empty;
         public string RegConfirmPassword { get; set; } = string.Empty;
 
-        // Wskaźnik siły hasła
         private double _passwordStrengthValue;
         public double PasswordStrengthValue { get => _passwordStrengthValue; set { _passwordStrengthValue = value; OnPropertyChanged(); } }
 
@@ -68,7 +64,6 @@ namespace DataAnalizer.ViewModels
         private Visibility _passwordStrengthVisibility = Visibility.Collapsed;
         public Visibility PasswordStrengthVisibility { get => _passwordStrengthVisibility; set { _passwordStrengthVisibility = value; OnPropertyChanged(); } }
 
-        // Status 
         private string _statusText = string.Empty;
         public string StatusText { get => _statusText; set { _statusText = value; OnPropertyChanged(); } }
 

@@ -9,7 +9,6 @@ namespace DataAnalizer.Views
     {
         private readonly LoginViewModel _viewModel;
         
-        // Zmienne do zapobiegania zapętleniu podczas przepisywania haseł
         private bool _isSyncingLoginPwd = false;
         private bool _isSyncingRegPwd = false;
         private bool _isSyncingRegConfPwd = false;
@@ -45,9 +44,6 @@ namespace DataAnalizer.Views
             RegConfirmPasswordTextBox.Clear();
         }
 
-        // ==========================================
-        // SYNCHRONIZACJA HASEŁ - LOGOWANIE
-        // ==========================================
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (_isSyncingLoginPwd) return;
@@ -66,9 +62,6 @@ namespace DataAnalizer.Views
             _isSyncingLoginPwd = false;
         }
 
-        // ==========================================
-        // SYNCHRONIZACJA HASEŁ - REJESTRACJA
-        // ==========================================
         private void RegPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (_isSyncingRegPwd) return;
@@ -107,9 +100,6 @@ namespace DataAnalizer.Views
             _isSyncingRegConfPwd = false;
         }
 
-        // ==========================================
-        // OBSŁUGA KLAWISZA ENTER
-        // ==========================================
         private void LoginPanel_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
