@@ -10,9 +10,12 @@ from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
 import bcrypt
 import jwt
+from typing import List, Optional
+from fastapi.responses import JSONResponse
 
 from data_service import get_city_analytics, clean_data, process_apartament_data
 from database import get_db_connection, init_db
+from data_service import get_city_analytics, clean_data, process_apartament_data, perform_deep_analysis
 
 # JWT CONFIG
 JWT_SECRET = "super_secret_key"
@@ -34,6 +37,60 @@ def create_jwt_token(username: str):
         "exp": datetime.utcnow() + timedelta(hours=12)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+class AnalysisFilters(BaseModel):
+    cities: Optional[List[str]] = []
+    types: Optional[List[str]] = []
+    ownerships: Optional[List[str]] = []
+    building_materials: Optional[List[str]] = []
+    conditions: Optional[List[str]] = []
+
+    min_price: Optional[float] = None
+    max_price: Optional[float] = None
+    min_sqm: Optional[float] = None
+    max_sqm: Optional[float] = None
+    min_rooms: Optional[float] = None
+    max_rooms: Optional[float] = None
+    min_floor: Optional[float] = None
+    max_floor: Optional[float] = None
+    min_floor_count: Optional[float] = None
+    max_floor_count: Optional[float] = None
+    min_build_year: Optional[float] = None
+    max_build_year: Optional[float] = None
+
+    min_centre_distance: Optional[float] = None
+    max_centre_distance: Optional[float] = None
+    min_poi: Optional[float] = None
+    max_poi: Optional[float] = None
+    
+    # WSZYSTKIE DYSTANSE
+    min_school_dist: Optional[float] = None
+    max_school_dist: Optional[float] = None
+    min_clinic_dist: Optional[float] = None
+    max_clinic_dist: Optional[float] = None
+    min_post_office_dist: Optional[float] = None
+    max_post_office_dist: Optional[float] = None
+    min_kindergarten_dist: Optional[float] = None
+    max_kindergarten_dist: Optional[float] = None
+    min_restaurant_dist: Optional[float] = None
+    max_restaurant_dist: Optional[float] = None
+    min_college_dist: Optional[float] = None
+    max_college_dist: Optional[float] = None
+    min_pharmacy_dist: Optional[float] = None
+    max_pharmacy_dist: Optional[float] = None
+
+    has_parking: Optional[bool] = None
+    has_balcony: Optional[bool] = None
+    has_elevator: Optional[bool] = None
+    has_security: Optional[bool] = None
+    has_storage_room: Optional[bool] = None
+
+class DeepAnalysisRequest(BaseModel):
+    log_id: int
+    filters: AnalysisFilters
+    requested_kpis: Optional[List[str]] = []
+    requested_charts: List[int]
+
 
 # LIFESPAN APP (Zarządzanie startem i końcem aplikacji)
 @asynccontextmanager
@@ -251,6 +308,99 @@ async def predict_price(city: str, rooms: int, distance: float, sqm: float):
         "predicted_price": max(0, round(predicted, 2)),
         "source": "database" if city_data else "default"
     }
+
+@app.post("/deep_analysis")
+async def create_deep_analysis(req: DeepAnalysisRequest):
+    try:
+        conn = get_db_connection()
+        row = conn.execute("SELECT path FROM logs WHERE id = ?", (req.log_id,)).fetchone()
+        conn.close() # Od razu zamykamy połączenie z bazą
+        
+        if not row:
+            raise HTTPException(status_code=404, detail="Nie znaleziono pliku źródłowego.")
+
+        filepath = row['path']
+        df = pd.read_csv(filepath)
+
+        # Filtrujemy dane i tworzymy analizę (przekazujemy puste tablice na wykresy, bo ich już nie ma)
+        wyniki = perform_deep_analysis(df, req.filters.dict(), [])
+        
+        if "error" in wyniki:
+            return JSONResponse(status_code=400, content={"detail": wyniki["error"]})
+
+        # ZWRACAMY WYNIK W LOCIE (Brak zapisywania do bazy danych!)
+        return wyniki
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"detail": "Błąd generowania analizy: " + str(e)})
+# ==============================================================
+# Endpoint pomocniczy, żeby WPF wiedział, z jakich miast można wybierać w danym pliku
+@app.get("/cities/{log_id}")
+async def get_available_cities(log_id: int):
+    try:
+        conn = get_db_connection()
+        row = conn.execute("SELECT path FROM logs WHERE id = ?", (log_id,)).fetchone()
+        conn.close()
+        
+        if not row:
+            raise HTTPException(status_code=404, detail="Brak pliku")
+            
+        df = pd.read_csv(row['path'], usecols=['city'])
+        cities = df['city'].dropna().unique().tolist()
+        return sorted(cities)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+@app.get("/filter_ranges/{log_id}")
+async def get_filter_ranges(log_id: int):
+    try:
+        conn = get_db_connection()
+        row = conn.execute("SELECT path FROM logs WHERE id = ?", (log_id,)).fetchone()
+        conn.close()
+
+        if not row or not os.path.exists(row['path']):
+            raise HTTPException(status_code=404, detail="Brak pliku")
+
+        df = pd.read_csv(row['path'])
+
+        def get_unique(col):
+            if col in df.columns:
+                return sorted([str(x) for x in df[col].dropna().unique()])
+            return []
+
+        def get_min_max(col):
+            if col in df.columns and not df[col].dropna().empty:
+                return {"min": float(df[col].min()), "max": float(df[col].max())}
+            return {"min": 0.0, "max": 0.0}
+
+        return {
+            "categories": {
+                "cities": get_unique('city'),
+                "types": get_unique('type'),
+                "materials": get_unique('buildingMaterial'),
+                "conditions": get_unique('condition'),
+                "ownerships": get_unique('ownership')
+            },
+            "numeric": {
+                "price": get_min_max('price'),
+                "sqm": get_min_max('squareMeters'),
+                "rooms": get_min_max('rooms'),
+                "floor": get_min_max('floor'),
+                "floorCount": get_min_max('floorCount'),
+                "buildYear": get_min_max('buildYear'),
+                "centreDistance": get_min_max('centreDistance'),
+                "poiCount": get_min_max('poiCount'),
+                "schoolDistance": get_min_max('schoolDistance'),
+                "pharmacyDistance": get_min_max('pharmacyDistance'),
+                "clinicDistance": get_min_max('clinicDistance'),
+                "postOfficeDistance": get_min_max('postOfficeDistance'),
+                "kindergartenDistance": get_min_max('kindergartenDistance'),
+                "restaurantDistance": get_min_max('restaurantDistance'),
+                "collegeDistance": get_min_max('collegeDistance')
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

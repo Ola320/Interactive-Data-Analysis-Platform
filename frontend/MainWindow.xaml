@@ -81,6 +81,13 @@
                             <TextBlock Text="City Lookup" FontSize="14"/>
                         </StackPanel>
                     </Button>
+
+                    <Button x:Name="BtnDeepAnalysis" Click="BtnDeepAnalysis_Click" Style="{StaticResource NavButtonStyle}" Margin="0,0,0,5">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <lucide:PackIconLucide Kind="LineChart" Width="18" Height="18" Margin="0,0,10,0"/>
+                            <TextBlock Text="Deep Analysis" FontSize="14"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <Border Grid.Row="2" Background="#1e293b" CornerRadius="12" Margin="15,0,15,20" Padding="15">
