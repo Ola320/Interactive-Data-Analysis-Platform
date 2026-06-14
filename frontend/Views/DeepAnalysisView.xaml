@@ -48,7 +48,7 @@
 
         <Expander Grid.Column="0" ExpandDirection="Right" IsExpanded="True" Background="#f1f5f9" BorderBrush="#cbd5e1" BorderThickness="0,0,1,0">
             <Expander.Header>
-                <TextBlock Text="PANEL FILTRÓW" FontWeight="Bold" FontSize="14" Foreground="#4f46e5" Margin="0,15">
+                <TextBlock Text="FILTERS PANEL" FontWeight="Bold" FontSize="14" Foreground="#4f46e5" Margin="0,15">
                     <TextBlock.LayoutTransform>
                         <RotateTransform Angle="90"/>
                     </TextBlock.LayoutTransform>
@@ -62,15 +62,16 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Kryteria Analizy" FontSize="18" FontWeight="Bold" Foreground="#0f172a" Margin="20,10,20,10"/>
+                <TextBlock Grid.Row="0" Text="Analysis Criteria" FontSize="18" FontWeight="Bold" Foreground="#0f172a" Margin="20,10,20,10"/>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="15,0,15,0">
                     <StackPanel>
 
-                        <Expander Header="1. Lokalizacja i Typ Budynku" IsExpanded="False">
+                        <!-- 1. CATEGORICAL -->
+                        <Expander Header="1. Location &amp; Building Type" IsExpanded="False">
                             <StackPanel Margin="0,10,0,0" TextElement.FontWeight="Normal">
-                                <TextBlock Text="Miasta:" FontWeight="Medium" Margin="0,5,0,5"/>
-                                <CheckBox Content="Wybierz wszystkie" IsChecked="{Binding CitiesGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <TextBlock Text="Cities:" FontWeight="Medium" Margin="0,5,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding CitiesGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
                                 <ItemsControl ItemsSource="{Binding CitiesGroup.Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -79,8 +80,8 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <TextBlock Text="Typ Budynku:" FontWeight="Medium" Margin="0,15,0,5"/>
-                                <CheckBox Content="Wybierz wszystkie" IsChecked="{Binding TypesGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <TextBlock Text="Building Type:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding TypesGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
                                 <ItemsControl ItemsSource="{Binding TypesGroup.Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -89,8 +90,8 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <TextBlock Text="Materiał Budynku:" FontWeight="Medium" Margin="0,15,0,5"/>
-                                <CheckBox Content="Wybierz wszystkie" IsChecked="{Binding MaterialsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <TextBlock Text="Building Material:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding MaterialsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
                                 <ItemsControl ItemsSource="{Binding MaterialsGroup.Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -99,8 +100,8 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <TextBlock Text="Stan Wykończenia:" FontWeight="Medium" Margin="0,15,0,5"/>
-                                <CheckBox Content="Wybierz wszystkie" IsChecked="{Binding ConditionsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <TextBlock Text="Condition:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding ConditionsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
                                 <ItemsControl ItemsSource="{Binding ConditionsGroup.Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -109,8 +110,8 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <TextBlock Text="Typ Własności:" FontWeight="Medium" Margin="0,15,0,5"/>
-                                <CheckBox Content="Wybierz wszystkie" IsChecked="{Binding OwnershipsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <TextBlock Text="Ownership Type:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding OwnershipsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
                                 <ItemsControl ItemsSource="{Binding OwnershipsGroup.Items}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -121,7 +122,8 @@
                             </StackPanel>
                         </Expander>
 
-                        <Expander Header="2. Finanse, Metraż i Piętra" IsExpanded="False">
+                        <!-- 2. NUMERIC -->
+                        <Expander Header="2. Finance, Area &amp; Floors" IsExpanded="False">
                             <Grid Margin="0,10,0,0" TextElement.FontWeight="Normal">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -180,7 +182,8 @@
                             </Grid>
                         </Expander>
 
-                        <Expander Header="3. Udogodnienia" IsExpanded="False">
+                        <!-- 3. AMENITIES -->
+                        <Expander Header="3. Amenities" IsExpanded="False">
                             <Grid Margin="0,10,0,0" TextElement.FontWeight="Normal">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -194,40 +197,41 @@
                                     <RowDefinition Height="35"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Parking:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Parking Space:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding IdxParking}" Height="28">
-                                    <ComboBoxItem Content="Obojętnie"/>
-                                    <ComboBoxItem Content="Wymagany"/>
-                                    <ComboBoxItem Content="Brak"/>
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
                                 </ComboBox>
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Balkon:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Balcony:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding IdxBalcony}" Height="28">
-                                    <ComboBoxItem Content="Obojętnie"/>
-                                    <ComboBoxItem Content="Wymagany"/>
-                                    <ComboBoxItem Content="Brak"/>
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
                                 </ComboBox>
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Winda:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Elevator:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding IdxElevator}" Height="28">
-                                    <ComboBoxItem Content="Obojętnie"/>
-                                    <ComboBoxItem Content="Wymagana"/>
-                                    <ComboBoxItem Content="Brak"/>
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
                                 </ComboBox>
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Ochrona:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Security:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <ComboBox Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding IdxSecurity}" Height="28">
-                                    <ComboBoxItem Content="Obojętnie"/>
-                                    <ComboBoxItem Content="Wymagana"/>
-                                    <ComboBoxItem Content="Brak"/>
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
                                 </ComboBox>
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Kom. Lokatorska:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Storage Room:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding IdxStorage}" Height="28">
-                                    <ComboBoxItem Content="Obojętnie"/>
-                                    <ComboBoxItem Content="Wymagana"/>
-                                    <ComboBoxItem Content="Brak"/>
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
                                 </ComboBox>
                             </Grid>
                         </Expander>
 
-                        <Expander Header="4. Okolica i POI" IsExpanded="False">
+                        <!-- 4. POI -->
+                        <Expander Header="4. Surroundings &amp; POI" IsExpanded="False">
                             <Grid Margin="0,10,0,0" TextElement.FontWeight="Normal">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -310,15 +314,16 @@
                             </Grid>
                         </Expander>
 
-                        <Expander Header="5. Wybrane Analizy" IsExpanded="True" BorderBrush="#4f46e5" BorderThickness="2">
+                        <!-- 5. ANALYSES -->
+                        <Expander Header="5. Selected Analyses" IsExpanded="True" BorderBrush="#4f46e5" BorderThickness="2">
                             <StackPanel Margin="0,10,0,0" TextElement.FontWeight="Normal">
-                                <CheckBox Content="Liczba Ofert" IsChecked="{Binding ReqCount}" Margin="0,3"/>
-                                <CheckBox Content="Średnia Cena za m²" IsChecked="{Binding ReqPriceSqm}" Margin="0,3"/>
-                                <CheckBox Content="Średnia Cena Całkowita" IsChecked="{Binding ReqPrice}" Margin="0,3"/>
-                                <CheckBox Content="Wiek Budynków" IsChecked="{Binding ReqAge}" Margin="0,3"/>
-                                <CheckBox Content="Udział w Rynku" IsChecked="{Binding ReqMarketShare}" Margin="0,3"/>
-                                <CheckBox Content="Średnie Odległości do POI" IsChecked="{Binding ReqDistances}" Margin="0,3"/>
-                                <CheckBox Content="Wartość Udogodnień (Rynkowa dopłata)" IsChecked="{Binding ReqAmenities}" Margin="0,3"/>
+                                <CheckBox Content="Total Offers" IsChecked="{Binding ReqCount}" Margin="0,3"/>
+                                <CheckBox Content="Average Price per m²" IsChecked="{Binding ReqPriceSqm}" Margin="0,3"/>
+                                <CheckBox Content="Average Total Price" IsChecked="{Binding ReqPrice}" Margin="0,3"/>
+                                <CheckBox Content="Building Age" IsChecked="{Binding ReqAge}" Margin="0,3"/>
+                                <CheckBox Content="Market Share" IsChecked="{Binding ReqMarketShare}" Margin="0,3"/>
+                                <CheckBox Content="Average POI Distances" IsChecked="{Binding ReqDistances}" Margin="0,3"/>
+                                <CheckBox Content="Amenities Value (Market Premium)" IsChecked="{Binding ReqAmenities}" Margin="0,3"/>
                             </StackPanel>
                         </Expander>
 
@@ -326,7 +331,7 @@
                 </ScrollViewer>
 
                 <Border Grid.Row="2" Background="White" Padding="15" BorderBrush="#cbd5e1" BorderThickness="0,1,0,0">
-                    <Button Content="GENERUJ ANALIZĘ" Command="{Binding AnalyzeCommand}" Background="#4f46e5" Foreground="White" Height="45" FontSize="14" FontWeight="Bold" Cursor="Hand">
+                    <Button Content="GENERATE ANALYSIS" Command="{Binding AnalyzeCommand}" Background="#4f46e5" Foreground="White" Height="45" FontSize="14" FontWeight="Bold" Cursor="Hand">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="8"/>
@@ -337,84 +342,85 @@
             </Grid>
         </Expander>
 
+        <!-- RESULTS -->
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="30">
 
-                <TextBlock Text="Ustaw filtry po lewej i wygeneruj analizę" FontSize="18" Foreground="#94a3b8" HorizontalAlignment="Center" Margin="0,100,0,0" Visibility="{Binding HasResults, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}"/>
-
                 <StackPanel Visibility="{Binding HasResults, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <TextBlock Text="WYNIKI ANALIZY DLA WYBRANEGO ZBIORU" FontSize="20" FontWeight="Bold" Foreground="#0f172a" Margin="5,0,0,15"/>
+                    <TextBlock Text="ANALYSIS RESULTS FOR SELECTED DATASET" FontSize="20" FontWeight="Bold" Foreground="#0f172a" Margin="5,0,0,15"/>
                     <UniformGrid Columns="3" Margin="0,0,0,20">
 
                         <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowCount, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="Liczba Ofert" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="Total Offers" Foreground="#64748b" FontSize="13"/>
                                 <TextBlock Text="{Binding Kpis.Count}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowPriceSqm, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="Średnia Cena za m²" Foreground="#64748b" FontSize="13"/>
-                                <TextBlock Text="{Binding Kpis.AvgPriceSqm, StringFormat={}{0:N0} zł}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                                <TextBlock Text="Avg Price per m²" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.AvgPriceSqm, StringFormat={}{0:N0} PLN}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowPrice, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="Średnia Cena Całkowita" Foreground="#64748b" FontSize="13"/>
-                                <TextBlock Text="{Binding Kpis.AvgPrice, StringFormat={}{0:N0} zł}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                                <TextBlock Text="Avg Total Price" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.AvgPrice, StringFormat={}{0:N0} PLN}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowAge, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="Profil Budynków (Śr. wiek)" Foreground="#64748b" FontSize="13"/>
-                                <TextBlock Text="{Binding Kpis.AvgBuildingAge, StringFormat={}{0:N1} lat}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                                <TextBlock Text="Building Profile (Avg Age)" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.AvgBuildingAge, StringFormat={}{0:N1} yrs}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowMarketShare, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="Udział w rynku" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="Market Share" Foreground="#64748b" FontSize="13"/>
                                 <TextBlock Text="{Binding Kpis.MarketShare, StringFormat={}{0:N1}%}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
                     </UniformGrid>
 
+                    <!-- DISTANCES -->
                     <Border Style="{StaticResource KpiCard}" Margin="5,0,5,20" Background="#f8fafc" BorderBrush="#4f46e5" BorderThickness="2" Padding="25" Visibility="{Binding ShowDistances, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel>
                             <DockPanel Margin="0,0,0,15">
                                 <lucide:PackIconLucide DockPanel.Dock="Left" Kind="MapPin" Foreground="#4f46e5" Width="24" Height="24" Margin="0,0,10,0"/>
-                                <TextBlock Text="Średnie odległości od udogodnień w tej okolicy" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                                <TextBlock Text="Average distances to amenities in this area" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
                             </DockPanel>
 
                             <UniformGrid Columns="2">
-                                <TextBlock Text="{Binding Kpis.AvgCentreDistance, StringFormat={}Do Centrum: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgSchoolDist, StringFormat={}Do Szkoły: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgClinicDist, StringFormat={}Do Przychodni: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgPostOfficeDist, StringFormat={}Do Poczty: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgKindergartenDist, StringFormat={}Do Przedszkola: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgRestaurantDist, StringFormat={}Do Restauracji: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgCollegeDist, StringFormat={}Do Uczelni: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.AvgPharmacyDist, StringFormat={}Do Apteki: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgCentreDistance, StringFormat={}To Center: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgSchoolDist, StringFormat={}To School: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgClinicDist, StringFormat={}To Clinic: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgPostOfficeDist, StringFormat={}To Post Office: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgKindergartenDist, StringFormat={}To Kindergarten: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgRestaurantDist, StringFormat={}To Restaurant: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgCollegeDist, StringFormat={}To College: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgPharmacyDist, StringFormat={}To Pharmacy: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
                             </UniformGrid>
                         </StackPanel>
                     </Border>
 
+                    <!-- AMENITIES -->
                     <Border Style="{StaticResource KpiCard}" Margin="5,0,5,20" Background="#f8fafc" BorderBrush="#10b981" BorderThickness="2" Padding="25" Visibility="{Binding ShowAmenities, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel>
                             <DockPanel Margin="0,0,0,15">
                                 <lucide:PackIconLucide DockPanel.Dock="Left" Kind="TrendingUp" Foreground="#10b981" Width="24" Height="24" Margin="0,0,10,0"/>
-                                <TextBlock Text="Ile dopłacasz za luksus? (Różnica w średniej cenie)" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                                <TextBlock Text="How much do you pay for luxury? (Avg price difference)" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
                             </DockPanel>
 
                             <UniformGrid Columns="2">
-                                <TextBlock Text="{Binding Kpis.CostParking, StringFormat={}Miejsce Parkingowe: +{0:N0} zł}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostBalcony, StringFormat={}Balkon: +{0:N0} zł}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostElevator, StringFormat={}Winda w budynku: +{0:N0} zł}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostSecurity, StringFormat={}Ochrona budynku: +{0:N0} zł}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostStorage, StringFormat={}Komórka lokatorska: +{0:N0} zł}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostParking, StringFormat={}Parking Space: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostBalcony, StringFormat={}Balcony: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostElevator, StringFormat={}Elevator in Building: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostSecurity, StringFormat={}Building Security: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostStorage, StringFormat={}Storage Room: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
                             </UniformGrid>
 
-                            <TextBlock Text="*Wartości puste oznaczają brak danych porównawczych w wyselekcjonowanej próbie." FontSize="11" Foreground="#94a3b8" Margin="0,15,0,0" FontStyle="Italic"/>
+                            <TextBlock Text="*Empty values indicate a lack of comparative data in the selected sample." FontSize="11" Foreground="#94a3b8" Margin="0,15,0,0" FontStyle="Italic"/>
                         </StackPanel>
                     </Border>
 

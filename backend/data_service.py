@@ -150,7 +150,7 @@ def perform_deep_analysis(df: pd.DataFrame, filters: dict, requested_charts: lis
             df = df[df[col].astype(str).str.lower() == target_str]
 
     if df.empty:
-        return {"error": "Brak danych spełniających podane kryteria."}
+        return {"error": "No data matches the given criteria."}
 
     df['price_sqm'] = df['price'] / df['squareMeters']
 

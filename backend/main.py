@@ -317,7 +317,7 @@ async def create_deep_analysis(req: DeepAnalysisRequest):
         conn.close() # Od razu zamykamy połączenie z bazą
         
         if not row:
-            raise HTTPException(status_code=404, detail="Nie znaleziono pliku źródłowego.")
+           raise HTTPException(status_code=404, detail="Source file not found.")
 
         filepath = row['path']
         df = pd.read_csv(filepath)
@@ -342,8 +342,8 @@ async def get_available_cities(log_id: int):
         row = conn.execute("SELECT path FROM logs WHERE id = ?", (log_id,)).fetchone()
         conn.close()
         
-        if not row:
-            raise HTTPException(status_code=404, detail="Brak pliku")
+        if not row or not os.path.exists(row['path']):
+            raise HTTPException(status_code=404, detail="File missing.")
             
         df = pd.read_csv(row['path'], usecols=['city'])
         cities = df['city'].dropna().unique().tolist()

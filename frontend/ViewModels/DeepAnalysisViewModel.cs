@@ -49,16 +49,16 @@ namespace DataAnalizer.ViewModels
     {
         private readonly ApiService _apiService = new ApiService();
 
-        // 1. FILTRY KATEGORIALNE
+        // 1. CATEGORICAL FILTERS
         public FilterGroup CitiesGroup { get; set; } = new();
         public FilterGroup TypesGroup { get; set; } = new();
         public FilterGroup OwnershipsGroup { get; set; } = new();
         public FilterGroup MaterialsGroup { get; set; } = new();
         public FilterGroup ConditionsGroup { get; set; } = new();
 
-        // 2. ETYKIETY Z PODPOWIEDZIAMI WIDEŁEK (Bindowane)
-        private string _lblPrice = "Cena:", _lblSqm = "Metraż:", _lblRooms = "Pokoje:", _lblFloor = "Piętro:", _lblFloorCount = "Pięter:", _lblYear = "Rok Budowy:", _lblDist = "Do Centrum:", _lblPoi = "Ilość POI:", _lblSchool = "Do Szkoły:", _lblPharm = "Do Apteki:";
-        private string _lblClinic = "Do Przychodni:", _lblPost = "Do Poczty:", _lblKinder = "Do Przedszkola:", _lblRest = "Do Restauracji:", _lblCol = "Do Uczelni:";
+        // 2. BOUND RANGE LABELS
+        private string _lblPrice = "Price:", _lblSqm = "Area:", _lblRooms = "Rooms:", _lblFloor = "Floor:", _lblFloorCount = "Floor Count:", _lblYear = "Build Year:", _lblDist = "To Center:", _lblPoi = "POI Count:", _lblSchool = "To School:", _lblPharm = "To Pharmacy:";
+        private string _lblClinic = "To Clinic:", _lblPost = "To Post Office:", _lblKinder = "To Kindergarten:", _lblRest = "To Restaurant:", _lblCol = "To College:";
 
         public string LblPrice { get => _lblPrice; set { _lblPrice = value; OnPropertyChanged(); } }
         public string LblSqm { get => _lblSqm; set { _lblSqm = value; OnPropertyChanged(); } }
@@ -76,7 +76,7 @@ namespace DataAnalizer.ViewModels
         public string LblRest { get => _lblRest; set { _lblRest = value; OnPropertyChanged(); } }
         public string LblCol { get => _lblCol; set { _lblCol = value; OnPropertyChanged(); } }
 
-        // 3. WARTOŚCI WPISANE (NUMERYCZNE)
+        // 3. USER INPUT VALUES (NUMERIC)
         private string _minPrice = "", _maxPrice = "", _minSqm = "", _maxSqm = "", _minRooms = "", _maxRooms = "";
         private string _minFloor = "", _maxFloor = "", _minFloorCount = "", _maxFloorCount = "", _minYear = "", _maxYear = "";
         private string _minDist = "", _maxDist = "", _minPoi = "", _maxPoi = "", _minSchool = "", _maxSchool = "", _minPharm = "", _maxPharm = "";
@@ -114,7 +114,7 @@ namespace DataAnalizer.ViewModels
         public string MinCol { get => _minCol; set { _minCol = value; OnPropertyChanged(); } }
         public string MaxCol { get => _maxCol; set { _maxCol = value; OnPropertyChanged(); } }
 
-        // 4. FILTRY UDOGODNIEŃ
+        // 4. AMENITIES FILTERS
         private int _idxParking = 0, _idxBalcony = 0, _idxElevator = 0, _idxSecurity = 0, _idxStorage = 0;
         public int IdxParking { get => _idxParking; set { _idxParking = value; OnPropertyChanged(); } }
         public int IdxBalcony { get => _idxBalcony; set { _idxBalcony = value; OnPropertyChanged(); } }
@@ -122,7 +122,7 @@ namespace DataAnalizer.ViewModels
         public int IdxSecurity { get => _idxSecurity; set { _idxSecurity = value; OnPropertyChanged(); } }
         public int IdxStorage { get => _idxStorage; set { _idxStorage = value; OnPropertyChanged(); } }
 
-        // 5. CHECKBOXY (ŻĄDANIA UŻYTKOWNIKA)
+        // 5. CHECKBOXES (USER REQUESTS)
         private bool _reqC = true, _reqPS = true, _reqP = true, _reqA = true, _reqMS = true, _reqDist = true, _reqAm = true;
         public bool ReqCount { get => _reqC; set { _reqC = value; OnPropertyChanged(); } }
         public bool ReqPriceSqm { get => _reqPS; set { _reqPS = value; OnPropertyChanged(); } }
@@ -132,7 +132,7 @@ namespace DataAnalizer.ViewModels
         public bool ReqDistances { get => _reqDist; set { _reqDist = value; OnPropertyChanged(); } }
         public bool ReqAmenities { get => _reqAm; set { _reqAm = value; OnPropertyChanged(); } }
 
-        // 6. WIDOCZNOŚĆ WYNIKÓW (Sterowana tylko przez przycisk Generuj)
+        // 6. RESULTS VISIBILITY
         private bool _showC, _showPS, _showP, _showA, _showMS, _showDist, _showAm;
         public bool ShowCount { get => _showC; set { _showC = value; OnPropertyChanged(); } }
         public bool ShowPriceSqm { get => _showPS; set { _showPS = value; OnPropertyChanged(); } }
@@ -142,7 +142,7 @@ namespace DataAnalizer.ViewModels
         public bool ShowDistances { get => _showDist; set { _showDist = value; OnPropertyChanged(); } }
         public bool ShowAmenities { get => _showAm; set { _showAm = value; OnPropertyChanged(); } }
 
-        // 7. WYNIKI (Kpis)
+        // 7. RESULTS (KPIs)
         private AnalysisKpis? _kpis;
         public AnalysisKpis? Kpis { get => _kpis; set { _kpis = value; OnPropertyChanged(); OnPropertyChanged(nameof(HasResults)); } }
         public bool HasResults => Kpis != null;
@@ -167,22 +167,22 @@ namespace DataAnalizer.ViewModels
                     foreach (var m in ranges.Categories.Materials) MaterialsGroup.AddItem(m);
                     foreach (var cond in ranges.Categories.Conditions) ConditionsGroup.AddItem(cond);
 
-                    LblPrice = $"Cena PLN ({ranges.Numeric.Price.Min:N0} - {ranges.Numeric.Price.Max:N0}):";
-                    LblSqm = $"Metraż m² ({ranges.Numeric.Sqm.Min:N0} - {ranges.Numeric.Sqm.Max:N0}):";
-                    LblRooms = $"Liczba Pokoi ({ranges.Numeric.Rooms.Min} - {ranges.Numeric.Rooms.Max}):";
-                    LblFloor = $"Piętro ({ranges.Numeric.Floor.Min} - {ranges.Numeric.Floor.Max}):";
-                    LblFloorCount = $"Pięter w Bud. ({ranges.Numeric.FloorCount.Min} - {ranges.Numeric.FloorCount.Max}):";
-                    LblYear = $"Rok Budowy ({ranges.Numeric.BuildYear.Min} - {ranges.Numeric.BuildYear.Max}):";
-                    LblPoi = $"Ilość POI ({ranges.Numeric.PoiCount.Min} - {ranges.Numeric.PoiCount.Max}):";
+                    LblPrice = $"Price PLN ({ranges.Numeric.Price.Min:N0} - {ranges.Numeric.Price.Max:N0}):";
+                    LblSqm = $"Area m² ({ranges.Numeric.Sqm.Min:N0} - {ranges.Numeric.Sqm.Max:N0}):";
+                    LblRooms = $"Rooms ({ranges.Numeric.Rooms.Min} - {ranges.Numeric.Rooms.Max}):";
+                    LblFloor = $"Floor ({ranges.Numeric.Floor.Min} - {ranges.Numeric.Floor.Max}):";
+                    LblFloorCount = $"Floor Count ({ranges.Numeric.FloorCount.Min} - {ranges.Numeric.FloorCount.Max}):";
+                    LblYear = $"Build Year ({ranges.Numeric.BuildYear.Min} - {ranges.Numeric.BuildYear.Max}):";
+                    LblPoi = $"POI Count ({ranges.Numeric.PoiCount.Min} - {ranges.Numeric.PoiCount.Max}):";
 
-                    LblDist = $"Do Centrum ({ranges.Numeric.CentreDistance.Min:N1} - {ranges.Numeric.CentreDistance.Max:N1}km):";
-                    LblSchool = $"Do Szkoły ({ranges.Numeric.SchoolDistance.Min:N1} - {ranges.Numeric.SchoolDistance.Max:N1}km):";
-                    LblPharm = $"Do Apteki ({ranges.Numeric.PharmacyDistance.Min:N1} - {ranges.Numeric.PharmacyDistance.Max:N1}km):";
-                    LblClinic = $"Do Przychodni ({ranges.Numeric.ClinicDistance.Min:N1} - {ranges.Numeric.ClinicDistance.Max:N1}km):";
-                    LblPost = $"Do Poczty ({ranges.Numeric.PostOfficeDistance.Min:N1} - {ranges.Numeric.PostOfficeDistance.Max:N1}km):";
-                    LblKinder = $"Do Przedszkola ({ranges.Numeric.KindergartenDistance.Min:N1} - {ranges.Numeric.KindergartenDistance.Max:N1}km):";
-                    LblRest = $"Do Restauracji ({ranges.Numeric.RestaurantDistance.Min:N1} - {ranges.Numeric.RestaurantDistance.Max:N1}km):";
-                    LblCol = $"Do Uczelni ({ranges.Numeric.CollegeDistance.Min:N1} - {ranges.Numeric.CollegeDistance.Max:N1}km):";
+                    LblDist = $"To Center ({ranges.Numeric.CentreDistance.Min:N1} - {ranges.Numeric.CentreDistance.Max:N1}km):";
+                    LblSchool = $"To School ({ranges.Numeric.SchoolDistance.Min:N1} - {ranges.Numeric.SchoolDistance.Max:N1}km):";
+                    LblPharm = $"To Pharmacy ({ranges.Numeric.PharmacyDistance.Min:N1} - {ranges.Numeric.PharmacyDistance.Max:N1}km):";
+                    LblClinic = $"To Clinic ({ranges.Numeric.ClinicDistance.Min:N1} - {ranges.Numeric.ClinicDistance.Max:N1}km):";
+                    LblPost = $"To Post Office ({ranges.Numeric.PostOfficeDistance.Min:N1} - {ranges.Numeric.PostOfficeDistance.Max:N1}km):";
+                    LblKinder = $"To Kindergarten ({ranges.Numeric.KindergartenDistance.Min:N1} - {ranges.Numeric.KindergartenDistance.Max:N1}km):";
+                    LblRest = $"To Restaurant ({ranges.Numeric.RestaurantDistance.Min:N1} - {ranges.Numeric.RestaurantDistance.Max:N1}km):";
+                    LblCol = $"To College ({ranges.Numeric.CollegeDistance.Min:N1} - {ranges.Numeric.CollegeDistance.Max:N1}km):";
                 }
             }
             catch { }
@@ -250,7 +250,6 @@ namespace DataAnalizer.ViewModels
             {
                 Kpis = response.Kpis;
 
-                // Aktualizujemy widoczność w interfejsie dopiero po przeliczeniu i pobraniu danych z Pythona
                 ShowCount = ReqCount;
                 ShowPriceSqm = ReqPriceSqm;
                 ShowPrice = ReqPrice;
@@ -261,10 +260,8 @@ namespace DataAnalizer.ViewModels
             }
             else
             {
-                MessageBox.Show("Brak danych!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("No data matches the given criteria! Relax the filters and try again.", "Empty Dataset", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Kpis = null;
-
-                // Chowamy wszystko
                 ShowCount = ShowPriceSqm = ShowPrice = ShowAge = ShowMarketShare = ShowDistances = ShowAmenities = false;
             }
         }
