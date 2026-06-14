@@ -77,10 +77,8 @@ def get_city_analytics(df: DataFrame, city: str,
                        min_rooms: int = None, max_rooms: int = None,
                        min_sqm: float = None, max_sqm: float = None,
                        min_price: float = None, max_price: float = None):
-    # Filter by city first
     df_city = df[df['city'].str.lower() == city.lower()].copy()
 
-    # Apply optional filters if columns exist
     if df_city.empty:
         return None
 

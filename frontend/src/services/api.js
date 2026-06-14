@@ -62,7 +62,7 @@ export const getData = async (id, filters = {}) => {
 };
 
 export const getCityDetails = async (id, city, filters = {}) => {
-  // In real app we'd call backend API with query params. Here we return mock data
+  // return mock data
   console.log('getCityDetails filters', filters);
   return new Promise((resolve) => {
     setTimeout(() => {

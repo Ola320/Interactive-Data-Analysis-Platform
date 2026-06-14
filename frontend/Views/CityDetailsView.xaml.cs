@@ -26,7 +26,6 @@ namespace DataAnalizer.Views
                 TxtError.Visibility = Visibility.Collapsed;
                 ResultsPanel.Visibility = Visibility.Collapsed;
 
-                // For this example, we get the latest log ID. In a real app, you might let the user choose the log.
                 var logs = await _apiService.GetLogsAsync();
                 if (!logs.Any())
                 {
@@ -36,7 +35,6 @@ namespace DataAnalizer.Views
                 }
 
                 int latestLogId = logs.First().Id;
-                // Read optional filters
                 int? minRooms = null, maxRooms = null;
                 double? minSqm = null, maxSqm = null, minPrice = null, maxPrice = null;
 

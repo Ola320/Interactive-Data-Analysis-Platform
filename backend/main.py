@@ -235,7 +235,7 @@ async def predict_price(city: str, rooms: int, distance: float, sqm: float):
     row = cursor.fetchone()
     conn.close()
 
-    base_price_per_m2 = 10000  # Domyślna cena, jeśli baza jest pusta
+    base_price_per_m2 = 10000  # Domyślna cena
 
     if row:
         all_stats = json.loads(row[0])

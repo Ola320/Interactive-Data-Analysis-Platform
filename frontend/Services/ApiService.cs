@@ -75,7 +75,6 @@ namespace DataAnalizer.Services
             return null;
         }
 
-        // Poprawiona metoda logowania (wyciąga access_token)
         public async Task<bool> LoginAsync(string username, string password)
         {
             var payload = new LoginRequest { Username = username, Password = password };
@@ -88,7 +87,6 @@ namespace DataAnalizer.Services
                 var json = await response.Content.ReadAsStringAsync();
                 using var doc = JsonDocument.Parse(json);
                 
-                // FastAPI domyślnie zwraca "access_token" zamiast "token"
                 if (doc.RootElement.TryGetProperty("access_token", out var tokenElement))
                 {
                     _jwtToken = tokenElement.GetString();
@@ -106,7 +104,6 @@ namespace DataAnalizer.Services
             return true;
         }
 
-        // Poprawiona metoda rejestracji obsługująca 3 argumenty (w tym email)
         public async Task<bool> RegisterAsync(string username, string password, string email)
         {
             var payload = new RegisterRequest 
