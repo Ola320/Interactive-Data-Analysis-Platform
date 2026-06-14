@@ -133,5 +133,36 @@ namespace DataAnalizer.Services
             var response = await _httpClient.PutAsJsonAsync($"/logs/{logId}/rename", payload);
             response.EnsureSuccessStatusCode();
         }
+
+        // Pobieranie dostępnych miast dla danego logu
+        public async Task<List<string>> GetAvailableCitiesAsync(int logId)
+        {
+            var response = await _httpClient.GetAsync($"/cities/{logId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return (await response.Content.ReadFromJsonAsync<List<string>>()) ?? new List<string>();
+            }
+            return new List<string>();
+        }
+
+        // Główna metoda uderzająca do Deep Analysis
+        public async Task<DeepAnalysisResponse?> GetDeepAnalysisAsync(DeepAnalysisRequest request)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/deep_analysis", request);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<DeepAnalysisResponse>();
+            }
+            return null;
+        }
+        public async Task<FilterRangesResponse?> GetFilterRangesAsync(int logId)
+        {
+            var response = await _httpClient.GetAsync($"/filter_ranges/{logId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<FilterRangesResponse>();
+            }
+            return null;
+        }
     }
 }

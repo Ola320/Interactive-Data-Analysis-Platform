@@ -1,0 +1,431 @@
+﻿<UserControl x:Class="DataAnalizer.Views.DeepAnalysisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lucide="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             Background="#f8fafc">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <Style TargetType="Expander">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#e2e8f0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1e293b"/>
+        </Style>
+
+        <Style x:Key="MinMaxTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="BorderBrush" Value="#cbd5e1"/>
+        </Style>
+
+        <Style x:Key="KpiCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderBrush" Value="#e2e8f0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" Color="#0f172a" Opacity="0.05" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Expander Grid.Column="0" ExpandDirection="Right" IsExpanded="True" Background="#f1f5f9" BorderBrush="#cbd5e1" BorderThickness="0,0,1,0">
+            <Expander.Header>
+                <TextBlock Text="FILTERS PANEL" FontWeight="Bold" FontSize="14" Foreground="#4f46e5" Margin="0,15">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="90"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </Expander.Header>
+
+            <Grid Width="450">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Analysis Criteria" FontSize="18" FontWeight="Bold" Foreground="#0f172a" Margin="20,10,20,10"/>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="15,0,15,0">
+                    <StackPanel>
+
+                        <!-- 1. CATEGORICAL -->
+                        <Expander Header="1. Location &amp; Building Type" IsExpanded="False">
+                            <StackPanel Margin="0,10,0,0" TextElement.FontWeight="Normal">
+                                <TextBlock Text="Cities:" FontWeight="Medium" Margin="0,5,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding CitiesGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <ItemsControl ItemsSource="{Binding CitiesGroup.Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="15,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Building Type:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding TypesGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <ItemsControl ItemsSource="{Binding TypesGroup.Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="15,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Building Material:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding MaterialsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <ItemsControl ItemsSource="{Binding MaterialsGroup.Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="15,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Condition:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding ConditionsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <ItemsControl ItemsSource="{Binding ConditionsGroup.Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="15,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Ownership Type:" FontWeight="Medium" Margin="0,15,0,5"/>
+                                <CheckBox Content="Select all" IsChecked="{Binding OwnershipsGroup.IsAllSelected}" FontWeight="Bold" Foreground="#4f46e5" Margin="0,0,0,5"/>
+                                <ItemsControl ItemsSource="{Binding OwnershipsGroup.Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="15,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- 2. NUMERIC -->
+                        <Expander Header="2. Finance, Area &amp; Floors" IsExpanded="False">
+                            <Grid Margin="0,10,0,0" TextElement.FontWeight="Normal">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="{Binding LblPrice}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinPrice}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxPrice}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblSqm}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinSqm}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxSqm}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblRooms}" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinRooms}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxRooms}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblFloor}" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinFloor}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxFloor}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblFloorCount}" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinFloorCount}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxFloorCount}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblYear}" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinYear}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxYear}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
+
+                        <!-- 3. AMENITIES -->
+                        <Expander Header="3. Amenities" IsExpanded="False">
+                            <Grid Margin="0,10,0,0" TextElement.FontWeight="Normal">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Parking Space:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding IdxParking}" Height="28">
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
+                                </ComboBox>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Balcony:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding IdxBalcony}" Height="28">
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
+                                </ComboBox>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Elevator:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding IdxElevator}" Height="28">
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
+                                </ComboBox>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Security:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox Grid.Row="3" Grid.Column="1" SelectedIndex="{Binding IdxSecurity}" Height="28">
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
+                                </ComboBox>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Storage Room:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox Grid.Row="4" Grid.Column="1" SelectedIndex="{Binding IdxStorage}" Height="28">
+                                    <ComboBoxItem Content="Any"/>
+                                    <ComboBoxItem Content="Required"/>
+                                    <ComboBoxItem Content="None"/>
+                                </ComboBox>
+                            </Grid>
+                        </Expander>
+
+                        <!-- 4. POI -->
+                        <Expander Header="4. Surroundings &amp; POI" IsExpanded="False">
+                            <Grid Margin="0,10,0,0" TextElement.FontWeight="Normal">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="{Binding LblPoi}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinPoi}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxPoi}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblDist}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinDist}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxDist}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblSchool}" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinSchool}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxSchool}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblPharm}" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinPharm}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxPharm}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblClinic}" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinClinic}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxClinic}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblPost}" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinPost}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxPost}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblKinder}" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinKinder}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxKinder}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblRest}" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinRest}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxRest}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding LblCol}" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,10,5" Foreground="#64748b" FontSize="11" TextWrapping="Wrap" MaxWidth="150"/>
+                                <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox Text="{Binding MinCol}" Style="{StaticResource MinMaxTextBox}"/>
+                                    <TextBlock Text=" - " Margin="5,0"/>
+                                    <TextBox Text="{Binding MaxCol}" Style="{StaticResource MinMaxTextBox}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
+
+                        <!-- 5. ANALYSES -->
+                        <Expander Header="5. Selected Analyses" IsExpanded="True" BorderBrush="#4f46e5" BorderThickness="2">
+                            <StackPanel Margin="0,10,0,0" TextElement.FontWeight="Normal">
+                                <CheckBox Content="Total Offers" IsChecked="{Binding ReqCount}" Margin="0,3"/>
+                                <CheckBox Content="Average Price per m²" IsChecked="{Binding ReqPriceSqm}" Margin="0,3"/>
+                                <CheckBox Content="Average Total Price" IsChecked="{Binding ReqPrice}" Margin="0,3"/>
+                                <CheckBox Content="Building Age" IsChecked="{Binding ReqAge}" Margin="0,3"/>
+                                <CheckBox Content="Market Share" IsChecked="{Binding ReqMarketShare}" Margin="0,3"/>
+                                <CheckBox Content="Average POI Distances" IsChecked="{Binding ReqDistances}" Margin="0,3"/>
+                                <CheckBox Content="Amenities Value (Market Premium)" IsChecked="{Binding ReqAmenities}" Margin="0,3"/>
+                            </StackPanel>
+                        </Expander>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Background="White" Padding="15" BorderBrush="#cbd5e1" BorderThickness="0,1,0,0">
+                    <Button Content="GENERATE ANALYSIS" Command="{Binding AnalyzeCommand}" Background="#4f46e5" Foreground="White" Height="45" FontSize="14" FontWeight="Bold" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Border>
+            </Grid>
+        </Expander>
+
+        <!-- RESULTS -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="30">
+
+                <StackPanel Visibility="{Binding HasResults, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <TextBlock Text="ANALYSIS RESULTS FOR SELECTED DATASET" FontSize="20" FontWeight="Bold" Foreground="#0f172a" Margin="5,0,0,15"/>
+                    <UniformGrid Columns="3" Margin="0,0,0,20">
+
+                        <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowCount, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="Total Offers" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.Count}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowPriceSqm, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="Avg Price per m²" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.AvgPriceSqm, StringFormat={}{0:N0} PLN}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowPrice, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="Avg Total Price" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.AvgPrice, StringFormat={}{0:N0} PLN}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowAge, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="Building Profile (Avg Age)" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.AvgBuildingAge, StringFormat={}{0:N1} yrs}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowMarketShare, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="Market Share" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="{Binding Kpis.MarketShare, StringFormat={}{0:N1}%}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- DISTANCES -->
+                    <Border Style="{StaticResource KpiCard}" Margin="5,0,5,20" Background="#f8fafc" BorderBrush="#4f46e5" BorderThickness="2" Padding="25" Visibility="{Binding ShowDistances, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,15">
+                                <lucide:PackIconLucide DockPanel.Dock="Left" Kind="MapPin" Foreground="#4f46e5" Width="24" Height="24" Margin="0,0,10,0"/>
+                                <TextBlock Text="Average distances to amenities in this area" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                            </DockPanel>
+
+                            <UniformGrid Columns="2">
+                                <TextBlock Text="{Binding Kpis.AvgCentreDistance, StringFormat={}To Center: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgSchoolDist, StringFormat={}To School: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgClinicDist, StringFormat={}To Clinic: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgPostOfficeDist, StringFormat={}To Post Office: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgKindergartenDist, StringFormat={}To Kindergarten: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgRestaurantDist, StringFormat={}To Restaurant: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgCollegeDist, StringFormat={}To College: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.AvgPharmacyDist, StringFormat={}To Pharmacy: {0:N2} km}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- AMENITIES -->
+                    <Border Style="{StaticResource KpiCard}" Margin="5,0,5,20" Background="#f8fafc" BorderBrush="#10b981" BorderThickness="2" Padding="25" Visibility="{Binding ShowAmenities, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,15">
+                                <lucide:PackIconLucide DockPanel.Dock="Left" Kind="TrendingUp" Foreground="#10b981" Width="24" Height="24" Margin="0,0,10,0"/>
+                                <TextBlock Text="How much do you pay for luxury? (Avg price difference)" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                            </DockPanel>
+
+                            <UniformGrid Columns="2">
+                                <TextBlock Text="{Binding Kpis.CostParking, StringFormat={}Parking Space: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostBalcony, StringFormat={}Balcony: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostElevator, StringFormat={}Elevator in Building: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostSecurity, StringFormat={}Building Security: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostStorage, StringFormat={}Storage Room: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                            </UniformGrid>
+
+                            <TextBlock Text="*Empty values indicate a lack of comparative data in the selected sample." FontSize="11" Foreground="#94a3b8" Margin="0,15,0,0" FontStyle="Italic"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

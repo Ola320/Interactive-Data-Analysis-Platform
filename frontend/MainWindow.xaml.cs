@@ -67,6 +67,11 @@ namespace DataAnalizer
             MainContentControl.Content = _cityDetailsView;
         }
 
+        private void BtnDeepAnalysis_Click(object sender, RoutedEventArgs e)
+        {
+            MainContentControl.Content = new Views.DeepAnalysisView();
+        }
+
         private void BtnProfile_Click(object sender, RoutedEventArgs e)
         {
             MainContentControl.Content = _profileView;

@@ -1,9 +1,10 @@
+using DataAnalizer.Models;
+using DataAnalizer.Services;
 using System;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
-using DataAnalizer.Services;
-using DataAnalizer.Models;
 
 namespace DataAnalizer.Views
 {
@@ -22,6 +23,7 @@ namespace DataAnalizer.Views
         {
             if (sender is Button btn && btn.DataContext is LogEntry log)
             {
+                AppState.CurrentLogId = log.Id;
                 var mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow != null)
                 {

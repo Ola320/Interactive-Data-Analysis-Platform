@@ -33,13 +33,13 @@ namespace DataAnalizer.Views
                 if (logs.Any())
                 {
                     var latestLog = logs.First();
+                    AppState.CurrentLogId = latestLog.Id;
                     var stats = await _apiService.GetLogDetailsAsync(latestLog.Id);
                     UpdateDashboard(stats);
                 }
             }
             catch (Exception ex)
             {
-                // Handle error quietly or show a toast
                 Console.WriteLine(ex.Message);
             }
         }
@@ -61,13 +61,11 @@ namespace DataAnalizer.Views
         {
             if (stats == null || stats.Summary == null) return;
 
-            // Update KPIs
             TxtTotalOffers.Text = stats.Summary.TotalOffers.ToString("N0");
             TxtAvgPrice.Text = $"${stats.Summary.AvgPrice:N0}";
             TxtMedianPrice.Text = $"${stats.Summary.MedianPrice:N0}";
             TxtAvgPricePerSqm.Text = $"${stats.Summary.AvgPricePerSqm:N0}";
 
-            // Update Bar Chart (Top Cities)
             if (stats.Charts?.CityChart != null)
             {
                 BarChartCities.Series = new ISeries[]
@@ -91,7 +89,6 @@ namespace DataAnalizer.Views
                 };
             }
 
-            // Update Pie Chart (Room Distribution)
             if (stats.Charts?.RoomsChart != null)
             {
                 var colors = new[] { "#4f46e5", "#6366f1", "#818cf8", "#a5b4fc", "#c7d2fe" };
@@ -109,7 +106,6 @@ namespace DataAnalizer.Views
                 PieChartRooms.Series = series.ToArray();
             }
 
-            // Update Trend Chart
             if (stats.Charts?.Trends != null)
             {
                 LineChartTrends.Series = new ISeries[]
@@ -134,7 +130,6 @@ namespace DataAnalizer.Views
                 };
             }
 
-            // Update Scatter Chart (Price vs Distance)
             if (stats.Charts?.PriceVsDistance != null)
             {
                 ScatterChartDistance.Series = new ISeries[]
@@ -165,13 +160,14 @@ namespace DataAnalizer.Views
                     {
                         UploadStatusText.Text = $"Uploading {System.IO.Path.GetFileName(filePath)}...";
                         UploadProgressBar.Visibility = Visibility.Visible;
-                        UploadProgressBar.Value = 50; // Simulate progress
-                        
+                        UploadProgressBar.Value = 50;
+
                         try
                         {
                             var response = await _apiService.UploadFileAsync(filePath);
                             UploadProgressBar.Value = 100;
                             UploadStatusText.Text = "Upload complete!";
+                            AppState.CurrentLogId = response.Id;
                             UpdateDashboard(response.Stats);
                         }
                         catch (Exception ex)
@@ -181,7 +177,7 @@ namespace DataAnalizer.Views
                         }
                         finally
                         {
-                            await Task.Delay(2000); // Hide progress after delay
+                            await Task.Delay(2000);
                             UploadProgressBar.Visibility = Visibility.Collapsed;
                             UploadProgressBar.Value = 0;
                         }
