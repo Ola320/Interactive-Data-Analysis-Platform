@@ -36,7 +36,18 @@ namespace DataAnalizer.Views
                 }
 
                 int latestLogId = logs.First().Id;
-                var details = await _apiService.GetCityDetailsAsync(latestLogId, city);
+                // Read optional filters
+                int? minRooms = null, maxRooms = null;
+                double? minSqm = null, maxSqm = null, minPrice = null, maxPrice = null;
+
+                if (int.TryParse(TxtMinRooms?.Text, out var mr)) minRooms = mr;
+                if (int.TryParse(TxtMaxRooms?.Text, out var xr)) maxRooms = xr;
+                if (double.TryParse(TxtMinSqm?.Text, out var ms)) minSqm = ms;
+                if (double.TryParse(TxtMaxSqm?.Text, out var xs)) maxSqm = xs;
+                if (double.TryParse(TxtMinPrice?.Text, out var mp)) minPrice = mp;
+                if (double.TryParse(TxtMaxPrice?.Text, out var xp)) maxPrice = xp;
+
+                var details = await _apiService.GetCityDetailsAsync(latestLogId, city, minRooms, maxRooms, minSqm, maxSqm, minPrice, maxPrice);
 
                 if (details != null)
                 {

@@ -52,9 +52,22 @@ namespace DataAnalizer.Services
             return (await response.Content.ReadFromJsonAsync<AnalyticsData>())!;
         }
 
-        public async Task<CityAnalytics?> GetCityDetailsAsync(int logId, string cityName)
+        public async Task<CityAnalytics?> GetCityDetailsAsync(int logId, string cityName,
+            int? minRooms = null, int? maxRooms = null,
+            double? minSqm = null, double? maxSqm = null,
+            double? minPrice = null, double? maxPrice = null)
         {
-            var response = await _httpClient.GetAsync($"/city_details/{logId}/{cityName}");
+            var url = $"/city_details/{logId}/{cityName}";
+            var query = new List<string>();
+            if (minRooms.HasValue) query.Add($"min_rooms={minRooms.Value}");
+            if (maxRooms.HasValue) query.Add($"max_rooms={maxRooms.Value}");
+            if (minSqm.HasValue) query.Add($"min_sqm={minSqm.Value}");
+            if (maxSqm.HasValue) query.Add($"max_sqm={maxSqm.Value}");
+            if (minPrice.HasValue) query.Add($"min_price={minPrice.Value}");
+            if (maxPrice.HasValue) query.Add($"max_price={maxPrice.Value}");
+            if (query.Count > 0) url += "?" + string.Join("&", query);
+
+            var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 return (await response.Content.ReadFromJsonAsync<CityAnalytics>())!;

@@ -12,6 +12,12 @@ const formatCurrency = (value) => {
 
 const CityDetails = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [minRooms, setMinRooms] = useState('');
+  const [maxRooms, setMaxRooms] = useState('');
+  const [minSqm, setMinSqm] = useState('');
+  const [maxSqm, setMaxSqm] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [cityData, setCityData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,7 +29,16 @@ const CityDetails = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getCityDetails('latest', searchTerm);
+      const filters = {
+        min_rooms: minRooms ? Number(minRooms) : undefined,
+        max_rooms: maxRooms ? Number(maxRooms) : undefined,
+        min_sqm: minSqm ? Number(minSqm) : undefined,
+        max_sqm: maxSqm ? Number(maxSqm) : undefined,
+        min_price: minPrice ? Number(minPrice) : undefined,
+        max_price: maxPrice ? Number(maxPrice) : undefined,
+      };
+
+      const data = await getCityDetails('latest', searchTerm, filters);
       setCityData(data);
     } catch (err) {
       setError("Failed to fetch data for this city.");
@@ -40,7 +55,7 @@ const CityDetails = () => {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
-        <form onSubmit={handleSearch} className="flex gap-4 max-w-2xl">
+        <form onSubmit={handleSearch} className="flex flex-col gap-4 max-w-2xl">
           <div className="relative flex-1">
             <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -51,13 +66,93 @@ const CityDetails = () => {
               className="w-full pl-12 pr-4 py-3 rounded-lg bg-slate-50 border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Searching...' : 'Search'}
-          </button>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Rooms (column: rooms)</label>
+              <div className="flex gap-2">
+                <select
+                  value={minRooms}
+                  onChange={(e) => setMinRooms(e.target.value)}
+                  className="w-24 pl-2 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm"
+                >
+                  <option value="">Any</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7+</option>
+                </select>
+                <select
+                  value={maxRooms}
+                  onChange={(e) => setMaxRooms(e.target.value)}
+                  className="w-24 pl-2 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm"
+                >
+                  <option value="">Any</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7+</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Area m² (column: squareMeters)</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={minSqm}
+                  onChange={(e) => setMinSqm(e.target.value)}
+                  placeholder="Min"
+                  className="w-32 pl-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm"
+                />
+                <input
+                  type="number"
+                  value={maxSqm}
+                  onChange={(e) => setMaxSqm(e.target.value)}
+                  placeholder="Max"
+                  className="w-32 pl-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-500 mb-1">Price (column: price)</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  placeholder="Min"
+                  className="w-40 pl-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm"
+                />
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  placeholder="Max"
+                  className="w-40 pl-3 py-2 rounded-lg bg-slate-50 border border-slate-300 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Searching...' : 'Search'}
+            </button>
+          </div>
         </form>
       </div>
 

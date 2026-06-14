@@ -169,7 +169,8 @@ async def get_log_details(log_id: int):
     return json.loads(row["stats"])
 
 @app.get("/city_details/{log_id}/{city_name}")
-async def city_details(log_id: int, city_name: str):
+async def city_details(log_id: int, city_name: str, min_rooms: int = None, max_rooms: int = None,
+                       min_sqm: float = None, max_sqm: float = None, min_price: float = None, max_price: float = None):
     conn = get_db_connection()
     row = conn.execute("SELECT path FROM logs WHERE id = ?",(log_id,)).fetchone()
     conn.close()
@@ -178,7 +179,10 @@ async def city_details(log_id: int, city_name: str):
         raise HTTPException(status_code=404, detail='Nie znaleziono takiego logu raportu.')
 
     df = pd.read_csv(row['path'])
-    analiza = get_city_analytics(df, city_name)
+    analiza = get_city_analytics(df, city_name,
+                                 min_rooms=min_rooms, max_rooms=max_rooms,
+                                 min_sqm=min_sqm, max_sqm=max_sqm,
+                                 min_price=min_price, max_price=max_price)
 
     if not analiza:
         raise HTTPException(status_code=404, detail='Nie znaleziono danych dla podanego miasta.')

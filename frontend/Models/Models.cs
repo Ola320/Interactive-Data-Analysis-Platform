@@ -119,13 +119,13 @@ namespace DataAnalizer.Models
         [JsonPropertyName("city")]
         public string City { get; set; } = null!;
 
-        [JsonPropertyName("total_listings")]
+        [JsonPropertyName("totalListings")]
         public int TotalListings { get; set; }
 
-        [JsonPropertyName("avg_price")]
+        [JsonPropertyName("avgPrice")]
         public double AvgPrice { get; set; }
 
-        [JsonPropertyName("avg_price_per_sqm")]
+        [JsonPropertyName("avgPricePerSqM")]
         public double AvgPricePerSqm { get; set; }
     }
 

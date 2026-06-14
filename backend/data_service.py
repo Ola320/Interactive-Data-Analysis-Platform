@@ -73,21 +73,43 @@ def process_apartament_data(df: pd.DataFrame):
 
     }
 
-def get_city_analytics(df: DataFrame, city: str):
+def get_city_analytics(df: DataFrame, city: str,
+                       min_rooms: int = None, max_rooms: int = None,
+                       min_sqm: float = None, max_sqm: float = None,
+                       min_price: float = None, max_price: float = None):
+    # Filter by city first
     df_city = df[df['city'].str.lower() == city.lower()].copy()
 
-    avg_m = round(df_city['price'].mean(),0)
-    avg_price_m2 = (df_city['price']/df_city['squareMeters']).mean()
+    # Apply optional filters if columns exist
+    if df_city.empty:
+        return None
 
-    distance_km = [
-        {'dist':round(float(r['centreDistance']),1),'price': int(r['price'])}
-        for _, r in df_city.iterrows()
-    ]
+    if min_rooms is not None and 'rooms' in df_city.columns:
+        df_city = df_city[df_city['rooms'] >= min_rooms]
+    if max_rooms is not None and 'rooms' in df_city.columns:
+        df_city = df_city[df_city['rooms'] <= max_rooms]
+
+    if min_sqm is not None and 'squareMeters' in df_city.columns:
+        df_city = df_city[df_city['squareMeters'] >= min_sqm]
+    if max_sqm is not None and 'squareMeters' in df_city.columns:
+        df_city = df_city[df_city['squareMeters'] <= max_sqm]
+
+    if min_price is not None and 'price' in df_city.columns:
+        df_city = df_city[df_city['price'] >= min_price]
+    if max_price is not None and 'price' in df_city.columns:
+        df_city = df_city[df_city['price'] <= max_price]
+
+    if df_city.empty:
+        return None
+
+    avg_m = round(df_city['price'].mean(), 0)
+    avg_price_m2 = (df_city['price'] / df_city['squareMeters']).mean()
+
     return {
         'city': city,
-        'total_listings': int(len(df_city)),
-        'avg_price': float(avg_m),
-        'avg_price_per_sqm': float(avg_price_m2)
+        'totalListings': int(len(df_city)),
+        'avgPrice': float(avg_m),
+        'avgPricePerSqM': float(round(avg_price_m2, 0))
     }
 
 
