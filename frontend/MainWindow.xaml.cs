@@ -1,6 +1,8 @@
-using System.Windows;
-using DataAnalizer.Views;
+using DataAnalizer.Models;
 using DataAnalizer.ViewModels;
+using DataAnalizer.Views;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace DataAnalizer
 {
@@ -27,17 +29,17 @@ namespace DataAnalizer
             ViewModel = new MainViewModel();
             this.DataContext = ViewModel;
 
-            // Domyślny start na oknie logowania
+        
             MainContentControl.Content = _loginView;
             ViewModel.CurrentView = _loginView;
 
-            // Monitorowanie powrotu do ekranu logowania (np. po użyciu przycisku "Log out")
+         
             ViewModel.OnViewChanged += (sender, newView) => {
                 if (newView is string viewName && viewName == "Login") 
                 {
                     MainContentControl.Content = _loginView;
                     
-                    // Czyścimy formularz w LoginViewModel przy wylogowaniu
+                 
                     if (_loginView.DataContext is LoginViewModel loginVM)
                     {
                         loginVM.ResetToLoginView();
@@ -46,20 +48,36 @@ namespace DataAnalizer
             };
         }
 
-        public void ShowDashboardWithLog(int logId)
+        public async Task ShowDashboardWithLogAsync(int logId)
         {
             MainContentControl.Content = _dashboardView;
-            _ = _dashboardView.LoadLogById(logId);
+            ViewModel.CurrentView = _dashboardView;
+
+            await _dashboardView.LoadLogByIdAsync(logId);
         }
 
-        private void BtnDashboard_Click(object sender, RoutedEventArgs e)
+        private async void BtnDashboard_Click( object sender,
+            RoutedEventArgs e)
         {
             MainContentControl.Content = _dashboardView;
+            ViewModel.CurrentView = _dashboardView;
+
+            if (AppState.CurrentLogId > 0)
+            {
+                await _dashboardView.LoadLogByIdAsync(
+                    AppState.CurrentLogId
+                );
+            }
+            else
+            {
+                await _dashboardView.LoadLatestDataAsync();
+            }
         }
 
-        private void BtnHistory_Click(object sender, RoutedEventArgs e)
+        private async void BtnHistory_Click(object sender, RoutedEventArgs e)
         {
             MainContentControl.Content = _historyView;
+            await _historyView.LoadLogsAsync();
         }
 
         private void BtnCityLookup_Click(object sender, RoutedEventArgs e)
@@ -77,26 +95,29 @@ namespace DataAnalizer
             MainContentControl.Content = _profileView;
         }
 
-        public void ShowMainView()
+        public async void ShowMainView()
         {
             MainContentControl.Content = _dashboardView;
-            
-            // ZGODNE Z MVVM: Pobieranie nazwy użytkownika bezpośrednio z ViewModelu logowania
+            ViewModel.CurrentView = _dashboardView;
+
             string user = "Użytkownik";
+
             if (_loginView.DataContext is LoginViewModel loginViewModel)
             {
-                // Sprawdzamy login z panelu logowania lub panelu rejestracji
                 if (!string.IsNullOrEmpty(loginViewModel.Username))
                 {
                     user = loginViewModel.Username;
                 }
                 else if (!string.IsNullOrEmpty(loginViewModel.RegUsername))
                 {
-                    user = loginViewModel.RegUsername; 
+                    user = loginViewModel.RegUsername;
                 }
             }
-            
+
             ViewModel.LoginSuccess(user);
+
+            await _dashboardView.LoadLatestDataAsync();
         }
     }
+    
 }

@@ -22,38 +22,56 @@ namespace DataAnalizer.Views
         {
             InitializeComponent();
             _apiService = new ApiService();
-            _ = LoadLatestDataAsync();
         }
 
-        private async Task LoadLatestDataAsync()
+        public async Task LoadLatestDataAsync()
         {
             try
             {
                 var logs = await _apiService.GetLogsAsync();
-                if (logs.Any())
-                {
-                    var latestLog = logs.First();
-                    AppState.CurrentLogId = latestLog.Id;
-                    var stats = await _apiService.GetLogDetailsAsync(latestLog.Id);
-                    UpdateDashboard(stats);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
 
-        public async Task LoadLogById(int logId)
-        {
-            try
-            {
-                var stats = await _apiService.GetLogDetailsAsync(logId);
+                if (!logs.Any())
+                    return;
+
+                LogEntry latestLog = logs.First();
+
+                AppState.CurrentLogId = latestLog.Id;
+
+                AnalyticsData stats =
+                    await _apiService.GetLogDetailsAsync(latestLog.Id);
+
                 UpdateDashboard(stats);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load analysis: {ex.Message}");
+                MessageBox.Show(
+                    $"Nie udało się wczytać najnowszej analizy:\n\n{ex.Message}",
+                    "Błąd",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
+        public async Task LoadLogByIdAsync(int logId)
+        {
+            try
+            {
+                AppState.CurrentLogId = logId;
+
+                AnalyticsData stats =
+                    await _apiService.GetLogDetailsAsync(logId);
+
+                UpdateDashboard(stats);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Nie udało się wczytać analizy dla ID {logId}:\n\n{ex.Message}",
+                    "Błąd analizy",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 

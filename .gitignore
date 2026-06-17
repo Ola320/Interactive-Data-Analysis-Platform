@@ -1,25 +1,63 @@
-## Pliki kompilacji
+```gitignore
+## Pliki kompilacji .NET
 bin/
 obj/
-../frontend/obj/
-../frontend/.vs/
+frontend/bin/
+frontend/obj/
 
-## Pliki Visual Studio
+## Visual Studio
 .vs/
+frontend/.vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-## Pliki NuGet (pobierają się same przy budowaniu)
+## NuGet
 packages/
 *.nuget.props
 *.nuget.targets
 
-## Pliki Testów i logi
+## Python
+.venv/
+venv/
+backend/.venv/
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+## Bazy danych SQLite
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+## Pliki przesyłane przez użytkownika
+backend/uploads/
+uploads/
+
+## Sekrety i zmienne środowiskowe
+.env
+.env.*
+!.env.example
+secrets.json
+
+## Testy, logi i pliki tymczasowe
 TestResults/
 *.log
+*.tmp
+*.temp
+.pytest_cache/
+.coverage
 
 ## Pliki systemowe
 Thumbs.db
 desktop.ini
+.DS_Store
+
+## JetBrains Rider / IntelliJ
+.idea/
+```

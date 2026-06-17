@@ -1,8 +1,7 @@
 using DataAnalizer.Models;
-using DataAnalizer.Services;
+using DataAnalizer.ViewModels;
 using System;
-using System.Linq;
-using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,107 +9,175 @@ namespace DataAnalizer.Views
 {
     public partial class HistoryView : UserControl
     {
-        private readonly ApiService _apiService;
+        private readonly HistoryViewModel _viewModel;
 
         public HistoryView()
         {
             InitializeComponent();
-            _apiService = new ApiService();
-            _ = LoadLogsAsync();
-        }
 
-        private async void BtnAnalyze_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.DataContext is LogEntry log)
-            {
-                AppState.CurrentLogId = log.Id;
-                var mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow != null)
+            _viewModel = new HistoryViewModel(
+                showDashboardAsync: async logId =>
                 {
-                    // Find the Dashboard view in MainWindow
-                    var dashboard = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault()?.FindName("MainContentControl") as ContentControl;
-                    
-                    // Actually, MainWindow has a private field _dashboardView. 
-                    // Let's use a better way to access it. 
-                    // I will modify MainWindow to have a public method or property.
-                    
-                    mainWindow.ShowDashboardWithLog(log.Id);
+                    if (Application.Current.MainWindow
+                        is MainWindow mainWindow)
+                    {
+                        await mainWindow
+                            .ShowDashboardWithLogAsync(logId);
+                    }
+                },
+
+                confirmDelete: log =>
+                {
+                    MessageBoxResult result =
+                        MessageBox.Show(
+                            $"Czy na pewno chcesz usunąć „{log.Name}”?",
+                            "Potwierdzenie usunięcia",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Warning
+                        );
+
+                    return result == MessageBoxResult.Yes;
                 }
-            }
+            );
+
+            DataContext = _viewModel;
+
+            Loaded += HistoryView_Loaded;
         }
 
-        private async void BtnDelete_Click(object sender, RoutedEventArgs e)
+        private async void HistoryView_Loaded(
+            object sender,
+            RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is LogEntry log)
+            await LoadLogsAsync();
+        }
+
+        
+
+        
+
+        private void BtnRename_Click(object sender, RoutedEventArgs e)
+
+        {
+            if (sender is not Button button ||
+                button.DataContext is not LogEntry log)
             {
-                var result = MessageBox.Show($"Are you sure you want to delete '{log.Name}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
+                return;
+            }
+
+            var inputWindow = new Window
+            {
+                Title = "Zmiana nazwy",
+                Width = 300,
+                Height = 160,
+                WindowStartupLocation =
+                    WindowStartupLocation.CenterOwner,
+                Owner = Application.Current.MainWindow,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            var stackPanel = new StackPanel
+            {
+                Margin = new Thickness(10)
+            };
+
+            var textBox = new TextBox
+            {
+                Text = log.Name,
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+
+            var saveButton = new Button
+            {
+                Content = "Zapisz",
+                IsDefault = true
+            };
+
+            saveButton.Click += async (_, _) =>
+            {
+                string newName = textBox.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(newName))
                 {
-                    try
-                    {
-                        await _apiService.DeleteLogAsync(log.Id);
-                        await LoadLogsAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error deleting log: {ex.Message}");
-                    }
+                    MessageBox.Show(
+                        "Nazwa nie może być pusta.",
+                        "Błąd walidacji",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning
+                    );
+
+                    return;
                 }
-            }
-        }
 
-        private async void BtnRename_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.DataContext is LogEntry log)
+                if (string.Equals(
+                        newName,
+                        log.Name,
+                        StringComparison.Ordinal))
+                {
+                    inputWindow.Close();
+                    return;
+                }
+
+                try
+                {
+                    saveButton.IsEnabled = false;
+
+                    await _viewModel.RenameLogAsync(
+                        log.Id,
+                        newName
+                    );
+
+                    inputWindow.Close();
+                }
+                catch (Exception ex)
+                {
+                    saveButton.IsEnabled = true;
+
+                    MessageBox.Show(
+                        $"Nie udało się zmienić nazwy:\n{ex.Message}",
+                        "Błąd",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            };
+
+            stackPanel.Children.Add(
+                new TextBlock
+                {
+                    Text = "Wprowadź nową nazwę:",
+                    Margin = new Thickness(0, 0, 0, 5)
+                }
+            );
+
+            stackPanel.Children.Add(textBox);
+            stackPanel.Children.Add(saveButton);
+
+            inputWindow.Content = stackPanel;
+
+            inputWindow.Loaded += (_, _) =>
             {
-                // Simple rename logic - for now using a MessageBox prompt isn't possible for input,
-                // so I'll use a very basic Window in code for input.
-                var inputWindow = new Window
-                {
-                    Title = "Rename Log",
-                    Width = 300,
-                    Height = 150,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    Owner = Application.Current.MainWindow,
-                    ResizeMode = ResizeMode.NoResize
-                };
+                textBox.Focus();
+                textBox.SelectAll();
+            };
 
-                var stackPanel = new StackPanel { Margin = new Thickness(10) };
-                var textBox = new TextBox { Text = log.Name, Margin = new Thickness(0, 0, 0, 10) };
-                var saveButton = new Button { Content = "Save", IsDefault = true };
-                
-                saveButton.Click += async (s, ev) =>
-                {
-                    try
-                    {
-                        await _apiService.RenameLogAsync(log.Id, textBox.Text);
-                        inputWindow.Close();
-                        await LoadLogsAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error renaming log: {ex.Message}");
-                    }
-                };
-
-                stackPanel.Children.Add(new TextBlock { Text = "Enter new name:", Margin = new Thickness(0, 0, 0, 5) });
-                stackPanel.Children.Add(textBox);
-                stackPanel.Children.Add(saveButton);
-                inputWindow.Content = stackPanel;
-                inputWindow.ShowDialog();
-            }
+            inputWindow.ShowDialog();
         }
 
-        private async System.Threading.Tasks.Task LoadLogsAsync()
+        public async Task LoadLogsAsync()
         {
             try
             {
-                var logs = await _apiService.GetLogsAsync();
-                LogsDataGrid.ItemsSource = logs;
+                await _viewModel.LoadLogsAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(
+                    $"Nie udało się pobrać historii:\n{ex.Message}",
+                    "Błąd",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
     }

@@ -27,6 +27,9 @@ class RegisterModel(BaseModel):
     email: str  # Dodane pole e-mail do rejestracji
     password: str
 
+class RenameLogModel(BaseModel):
+    name: str
+
 class LoginModel(BaseModel):
     username: str
     password: str
@@ -212,18 +215,39 @@ async def get_logs():
     conn.close()
     return [dict(row) for row in rows]
 
-@app.get("/logs/{log_id}")
-async def get_log_details(log_id: int):
+@app.put("/logs/{log_id}/rename")
+async def rename_log(log_id: int, payload: RenameLogModel):
+    new_name = payload.name.strip()
+
+    if not new_name:
+        raise HTTPException(
+            status_code=400,
+            detail="Nazwa nie może być pusta."
+        )
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT stats FROM logs WHERE id = ?", (log_id,))
-    row = cursor.fetchone()
+
+    cursor.execute(
+        "UPDATE logs SET name = ? WHERE id = ?",
+        (new_name, log_id)
+    )
+
+    if cursor.rowcount == 0:
+        conn.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Log nie istnieje."
+        )
+
+    conn.commit()
     conn.close()
 
-    if not row:
-        raise HTTPException(status_code=404, detail="Nie znaleziono logu o tym ID.")
-
-    return json.loads(row["stats"])
+    return {
+        "message": "Zmieniono nazwę",
+        "id": log_id,
+        "name": new_name
+    }
 
 @app.get("/city_details/{log_id}/{city_name}")
 async def city_details(log_id: int, city_name: str, min_rooms: int = None, max_rooms: int = None,
