@@ -321,7 +321,7 @@
                                 <CheckBox Content="Average Price per m²" IsChecked="{Binding ReqPriceSqm}" Margin="0,3"/>
                                 <CheckBox Content="Average Total Price" IsChecked="{Binding ReqPrice}" Margin="0,3"/>
                                 <CheckBox Content="Building Age" IsChecked="{Binding ReqAge}" Margin="0,3"/>
-                                <CheckBox Content="Market Share" IsChecked="{Binding ReqMarketShare}" Margin="0,3"/>
+                                <CheckBox Content="File Share" IsChecked="{Binding ReqMarketShare}" Margin="0,3"/>
                                 <CheckBox Content="Average POI Distances" IsChecked="{Binding ReqDistances}" Margin="0,3"/>
                                 <CheckBox Content="Amenities Value (Market Premium)" IsChecked="{Binding ReqAmenities}" Margin="0,3"/>
                             </StackPanel>
@@ -377,7 +377,7 @@
                         </Border>
                         <Border Style="{StaticResource KpiCard}" Visibility="{Binding ShowMarketShare, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel>
-                                <TextBlock Text="Market Share" Foreground="#64748b" FontSize="13"/>
+                                <TextBlock Text="File Share" Foreground="#64748b" FontSize="13"/>
                                 <TextBlock Text="{Binding Kpis.MarketShare, StringFormat={}{0:N1}%}" FontSize="28" FontWeight="Bold" Foreground="#0f172a" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
@@ -388,7 +388,7 @@
                         <StackPanel>
                             <DockPanel Margin="0,0,0,15">
                                 <lucide:PackIconLucide DockPanel.Dock="Left" Kind="MapPin" Foreground="#4f46e5" Width="24" Height="24" Margin="0,0,10,0"/>
-                                <TextBlock Text="Average distances to amenities in this area" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                                <TextBlock Text="Average distances to POI in this area" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
                             </DockPanel>
 
                             <UniformGrid Columns="2">
@@ -409,15 +409,15 @@
                         <StackPanel>
                             <DockPanel Margin="0,0,0,15">
                                 <lucide:PackIconLucide DockPanel.Dock="Left" Kind="TrendingUp" Foreground="#10b981" Width="24" Height="24" Margin="0,0,10,0"/>
-                                <TextBlock Text="How much do you pay for luxury? (Avg price difference)" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
+                                <TextBlock Text="Premium Features Valuation (Avg price difference)" FontSize="16" FontWeight="Bold" Foreground="#0f172a" VerticalAlignment="Center"/>
                             </DockPanel>
 
                             <UniformGrid Columns="2">
-                                <TextBlock Text="{Binding Kpis.CostParking, StringFormat={}Parking Space: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostBalcony, StringFormat={}Balcony: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostElevator, StringFormat={}Elevator in Building: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostSecurity, StringFormat={}Building Security: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
-                                <TextBlock Text="{Binding Kpis.CostStorage, StringFormat={}Storage Room: +{0:N0} PLN}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostParking, StringFormat='Parking Space: {0:+#,##0;-#,##0;0} PLN'}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostBalcony, StringFormat='Balcony: {0:+#,##0;-#,##0;0} PLN'}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostElevator, StringFormat='Elevator in Building: {0:+#,##0;-#,##0;0} PLN'}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostSecurity, StringFormat='Building Security: {0:+#,##0;-#,##0;0} PLN'}" FontSize="15" Margin="0,5" Foreground="#334155"/>
+                                <TextBlock Text="{Binding Kpis.CostStorage, StringFormat='Storage Room: {0:+#,##0;-#,##0;0} PLN'}" FontSize="15" Margin="0,5" Foreground="#334155"/>
                             </UniformGrid>
 
                             <TextBlock Text="*Empty values indicate a lack of comparative data in the selected sample." FontSize="11" Foreground="#94a3b8" Margin="0,15,0,0" FontStyle="Italic"/>
