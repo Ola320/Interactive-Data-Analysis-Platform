@@ -25,6 +25,7 @@ Projekt ma charakter edukacyjny i prezentuje praktyczne zastosowanie technologii
 
 
 2. Wykorzystane technologie
+   
 Frontend
 C# – główny język programowania aplikacji desktopowej.
 WPF (Windows Presentation Foundation) – technologia wykorzystana do stworzenia graficznego interfejsu użytkownika.
@@ -55,6 +56,7 @@ Visual studio insiders
 Git 
 GitHub 
 
+
 3. Funkcjonalnosci
 
 Rejestracja i Logowanie 
@@ -65,7 +67,8 @@ Historia analiz
 Wyszukiwanie filtrowanie po rekordach 
 Lokalny zapis wynikow 
 
-3. Architektura frontend-backend
+
+4. Architektura frontend-backend
 
 projekt został zbudowany w architekturze klient-serwer i składa sie dwoch głownych czesci 
 
